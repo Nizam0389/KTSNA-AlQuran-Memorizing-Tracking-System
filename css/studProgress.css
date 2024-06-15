@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    display: flex;
+    background-image: url('/image/dashbg2.jpg'); /* Set background image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sidebar {
+    width: 20%;
+    background-color: #6e42f4;
+    color: white;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.sidebar .profile img {
+    width: 100px; /* Increased logo size */
+    margin-bottom: 20px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .menu li {
+    padding: 0;
+}
+
+.sidebar .menu .menu-btn {
+    width: 100%;
+    padding: 20px 0; /* Increased padding for bigger button */
+    font-size: 18px; /* Increased font size */
+    background: none;
+    border: none;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .menu .menu-btn:hover,
+.sidebar .menu .menu-btn.active {
+    background-color: #5432d3;
+}
+
+.content {
+    width: 80%;
+    padding: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress-info {
+    background-color: #e0d4fc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #6e42f4;
+}
+
+.progress-inputs {
+    text-align: center;
+}
+
+.progress-inputs p {
+    margin: 5px 0;
+}
+
+.progress-inputs input {
+    width: 100px; /* Adjust width as needed */
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}

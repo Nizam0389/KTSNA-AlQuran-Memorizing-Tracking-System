@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTSNA Al Quran Memorizing Tracking System</title>
+    <link rel="stylesheet" href="/css/studProgress.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="profile">
+                <img src="/image/ktsna logo.png" alt="Profile Icon">
+            </div>
+            <ul class="menu">
+                <li><button class="menu-btn" onclick="location.href='studentDashboard.html'">Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='studProgress.html'">Progress</button></li>
+                <li><button class="menu-btn" onclick="location.href='studProgReport.html'">Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='login.html'">Logout</button></li>
+            </ul>
+        </div>
+        <div class="content">
+            <header>
+                <div class="user-info">
+                    <span>John Doe</span>
+                    <span>3rd year</span>
+                </div>
+            </header>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <h1>Memorizing Progress</h1>
+                    <div class="progress-inputs">
+                        <p>Page: <input type="text" id="pageInput"></p>
+                        <p>Chapter: <input type="text" id="chapterInput"></p>
+                        <p>Verse: <input type="text" id="verseInput"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/scripts.js"></script>
+</body>
+</html>
