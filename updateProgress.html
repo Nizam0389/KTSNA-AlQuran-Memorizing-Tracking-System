@@ -3,9 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KTSNA Al Quran Memorizing Tracking System</title>
+    <title>Update Progress - Al-Quran Memorizing Tracking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="container">
+        <h2>Update Progress</h2>
+        <form id="recordForm">
+            <div class="form-group">
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" name="studentName" required>
+            </div>
+            <div class="form-group">
+                <label for="currentPage">Current Page of Tasmi':</label>
+                <input type="number" id="currentPage" name="currentPage" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="currentSurah">Current Surah:</label>
+                <input type="text" id="currentSurah" name="currentSurah" required>
+            </div>
+            <div class="form-group">
+                <label for="totalTasmi">Total Tasmi' for the Month:</label>
+                <input type="number" id="totalTasmi" name="totalTasmi" min="0" required>
+            </div>
+            <button type="submit">Record Progress</button>
+        </form>
+
+        <h2>Recorded Progress</h2>
+        <table id="progressTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Current Page of Tasmi'</th>
+                    <th>Current Surah</th>
+                    <th>Total Tasmi' for the Month</th>
+                </tr>
+            </thead>
+            <tbody id="progressTableBody">
+                <!-- Records will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <script>
+            // Function to handle form submission and table population
+            document.getElementById('recordForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+
+                // Fetch form values
+                var studentName = document.getElementById('studentName').value;
+                var currentPage = document.getElementById('currentPage').value;
+                var currentSurah = document.getElementById('currentSurah').value;
+                var totalTasmi = document.getElementById('totalTasmi').value;
+
+                // Create new table row
+                var newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${studentName}</td>
+                    <td>${currentPage}</td>
+                    <td>${currentSurah}</td>
+                    <td>${totalTasmi}</td>
+                `;
+
+                // Append new row to table body
+                document.getElementById('progressTableBody').appendChild(newRow);
+
+                // Clear form fields
+                document.getElementById('recordForm').reset();
+            });
+        </script>
+    </div>
 </body>
 </html>
