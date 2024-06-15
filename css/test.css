@@ -1,0 +1,153 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 20%;
+    background-color: #6e42f4;
+    color: white;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.sidebar .profile img {
+    width: 60px;
+    margin-bottom: 20px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .menu li {
+    padding: 0;
+}
+
+.sidebar .menu .menu-btn {
+    width: 100%;
+    padding: 15px 0;
+    background: none;
+    border: none;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .menu .menu-btn:hover,
+.sidebar .menu .menu-btn.active {
+    background-color: #5432d3;
+}
+
+.main-content {
+    width: 80%;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 200px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info img {
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.welcome-message {
+    background-color: #e0d4fc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #6e42f4;
+}
+
+.finance, .enrolled-courses, .course-instructors, .daily-notice {
+    margin-top: 20px;
+}
+
+.finance h2, .enrolled-courses h2 {
+    margin-bottom: 10px;
+}
+
+.finance .cards-container, .enrolled-courses .cards-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.finance .card, .enrolled-courses .course-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.finance .card:last-child, .enrolled-courses .course-card:last-child {
+    margin-right: 0;
+}
+
+.finance .card:hover, .enrolled-courses .course-card:hover {
+    background-color: #e0d4fc;
+}
+
+.finance .card h2, .enrolled-courses .course-card h3 {
+    margin: 0;
+    color: #6e42f4;
+}
+
+.enrolled-courses .course-card button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #6e42f4;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.course-instructors .instructors {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.course-instructors .instructors img {
+    width: 60px;
+    border-radius: 50%;
+}
+
+.daily-notice .notice a {
+    display: block;
+    margin-top: 10px;
+    color: #6e42f4;
+    text-decoration: none;
+}
