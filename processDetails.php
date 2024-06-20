@@ -29,7 +29,96 @@ function getSurahName($surah_number) {
 }
 
 function calculateJuzu($page) {
-    return ceil($page / 20);
+    if ($page < 22) {
+        return 1;
+    } elseif ($page < 42) {
+        return 2;
+    } elseif ($page < 62) {
+        return 3;
+    } elseif ($page < 82) {
+        return 4;
+    } elseif ($page < 102) {
+        return 5;
+    } elseif ($page < 122) {
+        return 6;
+    } elseif ($page < 142) {
+        return 7;
+    } elseif ($page < 162) {
+        return 8;
+    } elseif ($page < 182) {
+        return 9;
+    } elseif ($page < 202) {
+        return 10;
+    } elseif ($page < 222) {
+        return 11;
+    } elseif ($page < 242) {
+        return 12;
+    } elseif ($page < 262) {
+        return 13;
+    } elseif ($page < 282) {
+        return 14;
+    } elseif ($page < 302) {
+        return 15;
+    } elseif ($page < 322) {
+        return 16;
+    } elseif ($page < 342) {
+        return 17;
+    } elseif ($page < 362) {
+        return 18;
+    } elseif ($page < 382) {
+        return 19;
+    } elseif ($page < 402) {
+        return 20;
+    } elseif ($page < 422) {
+        return 21;
+    } elseif ($page < 442) {
+        return 22;
+    } elseif ($page < 462) {
+        return 23;
+    } elseif ($page < 482) {
+        return 24;
+    } elseif ($page < 502) {
+        return 25;
+    } elseif ($page < 522) {
+        return 26;
+    } elseif ($page < 542) {
+        return 27;
+    } elseif ($page < 562) {
+        return 28;
+    } elseif ($page < 582) {
+        return 29;
+    } else {
+        return 30;
+    }
+}
+
+function calculateSurah($page) {
+    $page_ranges = [
+        [1, 1, 1], [2, 2, 49], [3, 50, 76], [4, 77, 106], [5, 107, 127],
+        [6, 128, 151], [7, 152, 177], [8, 178, 187], [9, 188, 207], [10, 208, 221],
+        [11, 222, 235], [12, 236, 249], [13, 250, 255], [14, 256, 261], [15, 262, 267],
+        [16, 268, 280], [17, 281, 293], [18, 294, 304], [19, 305, 312], [20, 313, 321],
+        [21, 322, 331], [22, 332, 341], [23, 342, 349], [24, 350, 359], [25, 360, 369],
+        [26, 370, 377], [27, 378, 385], [28, 386, 396], [29, 397, 404], [30, 405, 411],
+        [31, 412, 416], [32, 417, 419], [33, 420, 427], [34, 428, 434], [35, 435, 440],
+        [36, 441, 445], [37, 446, 451], [38, 452, 458], [39, 459, 467], [40, 468, 477],
+        [41, 478, 482], [42, 483, 489], [43, 490, 495], [44, 496, 498], [45, 499, 502],
+        [46, 503, 506], [47, 507, 510], [48, 511, 515], [49, 516, 518], [50, 519, 520],
+        [51, 521, 523], [52, 524, 526], [53, 527, 529], [54, 530, 532], [55, 533, 534],
+        [56, 535, 537], [57, 538, 541], [58, 542, 545], [59, 546, 548], [60, 549, 551],
+        [61, 552, 553], [62, 554, 555], [63, 556, 557], [64, 558, 560], [65, 561, 563],
+        [66, 564, 566], [67, 567, 568], [68, 569, 571], [69, 572, 573], [70, 574, 575],
+        [71, 576, 577], [72, 578, 579], [73, 580, 581], [74, 582, 583], [75, 584, 585],
+        [76, 586, 587], [77, 588, 589], [78, 590, 591], [79, 592, 593], [80, 594, 595],
+        [81, 596, 597], [82, 598, 599], [83, 600, 601], [84, 602, 603], [114, 604, 604]
+    ];
+
+    foreach ($page_ranges as $range) {
+        if ($page >= $range[1] && $page <= $range[2]) {
+            return $range[0];
+        }
+    }
+    return 1; // Default to Surah Al-Fatihah if not found
 }
 
 function getStatusDescription($status) {
