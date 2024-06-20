@@ -28,9 +28,35 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KTSNA Al Quran Memorizing Tracking System - Ustaz Dashboard</title>
+    <title>KTSNA Al Quran Memorizing Tracking System - Ustaz Record</title>
     <link rel="stylesheet" href="css/studDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .record-buttons-container {
+            display: flex;
+            /* justify-content: center; */
+            /* align-items: center; */
+            /* height: 100vh; */
+            gap: 20px;
+        }
+        .record-button {
+            width: 300px;
+            height: 200px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .record-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -52,28 +78,9 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
                     <span><?php echo htmlspecialchars($staff_username); ?></span>
                 </div>
             </header>
-            <div class="welcome-message">
-                <h1>Welcome back, <?php echo htmlspecialchars($staff_name); ?>!</h1>
-                <p>Always stay updated in your ustaz portal</p>
-            </div>
-            <div class="section">
-                <h2>Record</h2>
-                <div class="cards-container">
-                    <a href="studentList.php" class="card">
-                        <h2>Existing Student</h2>
-                    </a>
-                    <a href="newRecord.php" class="card">
-                        <h2>New Record</h2>
-                    </a>
-                </div>
-            </div>
-            <div class="section">
-                <h2>Report</h2>
-                <div class="cards-container">
-                    <a href="ustazReport.php" class="card">
-                        <h3>Generate Report</h3>
-                    </a>
-                </div>
+            <div class="record-buttons-container">
+                <a href="newRecord.php" class="record-button">Create New Record</a>
+                <a href="studentList.php" class="record-button">Record Existing Student</a>
             </div>
         </div>
     </div>

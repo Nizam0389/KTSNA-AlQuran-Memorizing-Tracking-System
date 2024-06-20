@@ -31,7 +31,18 @@ if ($stmt = mysqli_prepare($dbCon, $record_sql)) {
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $memo_id, $page, $status, $juzu, $surah, $date, $session, $student_name);
         while (mysqli_stmt_fetch($stmt)) {
-            $records[] = ['memo_id' => $memo_id, 'page' => $page, 'status' => $status, 'juzu' => $juzu, 'surah' => $surah, 'date' => $date, 'session' => $session, 'student_name' => $student_name];
+            $surah_name = getSurahName($surah);
+            $session_desc = getSessionDescription($session);
+            $records[] = [
+                'memo_id' => $memo_id,
+                'page' => $page,
+                'status' => $status,
+                'juzu' => $juzu,
+                'surah' => $surah_name,
+                'date' => $date,
+                'session' => $session_desc,
+                'student_name' => $student_name
+            ];
         }
         mysqli_stmt_close($stmt);
     }
@@ -41,17 +52,18 @@ if ($stmt = mysqli_prepare($dbCon, $record_sql)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $new_page = $_POST['page'];
     $new_status = $_POST['status'];
+    $new_session = $_POST['session'];
     $memo_id = $_POST['memo_id'];
 
     $new_juzu = calculateJuzu($new_page);
     $new_surah = calculateSurah($new_page);
     $new_date = date('Y-m-d');
 
-    $update_sql = "UPDATE memorizing_record SET page = ?, juzu = ?, surah = ?, date = ?, status = ? WHERE memo_id = ?";
+    $update_sql = "UPDATE memorizing_record SET page = ?, juzu = ?, surah = ?, date = ?, status = ?, session = ? WHERE memo_id = ?";
     if ($stmt = mysqli_prepare($dbCon, $update_sql)) {
-        mysqli_stmt_bind_param($stmt, "iiisss", $new_page, $new_juzu, $new_surah, $new_date, $new_status, $memo_id);
+        mysqli_stmt_bind_param($stmt, "iiissss", $new_page, $new_juzu, $new_surah, $new_date, $new_status, $new_session, $memo_id);
         if (mysqli_stmt_execute($stmt)) {
-            header("location: studentList.php");
+            header("Location: " . $_SERVER['REQUEST_URI']);
             exit;
         }
     }
@@ -66,6 +78,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Update Student Record - KTSNA Al Quran Memorizing Tracking System</title>
     <link rel="stylesheet" href="css/updStud.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        select#status, select#session {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
     <script>
         function confirmUpdate() {
             return confirm("Are you sure you want to update this record?");
@@ -76,11 +99,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="image/ktsna logo.png" alt="Profile Icon">
+            <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='studentList.php'"><i class="fas fa-users"></i>Student List</button></li>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="location.href='index.html'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
@@ -94,6 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </header>
             <div class="content-container">
+                <button onclick="location.href='studentList.php'" style="margin-bottom: 20px;">Back to Student List</button>
                 <h1>Update Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h1>
                 <?php if (!empty($records)): ?>
                     <?php foreach ($records as $record): ?>
@@ -109,6 +133,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <option value="f" <?php if ($record['status'] == 'f') echo 'selected'; ?>>Not Pass</option>
                                 </select>
 
+                                <label for="session">Session:</label>
+                                <select id="session" name="session">
+                                    <option value="d" <?php if ($record['session'] == 'Day') echo 'selected'; ?>>Day</option>
+                                    <option value="n" <?php if ($record['session'] == 'Night') echo 'selected'; ?>>Night</option>
+                                </select>
+
                                 <label for="juzu">Juzu:</label>
                                 <input type="text" id="juzu" name="juzu" value="<?php echo htmlspecialchars($record['juzu']); ?>" readonly>
 
@@ -117,9 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 <label for="date">Date:</label>
                                 <input type="text" id="date" name="date" value="<?php echo htmlspecialchars($record['date']); ?>" readonly>
-
-                                <label for="session">Session:</label>
-                                <input type="text" id="session" name="session" value="<?php echo htmlspecialchars($record['session']); ?>" readonly>
 
                                 <button type="submit">Update</button>
                             </form>
@@ -133,3 +160,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+

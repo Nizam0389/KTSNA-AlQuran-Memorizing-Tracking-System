@@ -146,3 +146,13 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
+select#status {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
