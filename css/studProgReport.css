@@ -1,12 +1,8 @@
-/* General styling */
+/* General styling for A4 layout */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     background-color: #f0f2f5;
 }
 
@@ -76,81 +72,90 @@ body {
 }
 
 header {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10mm;
+    margin-bottom: 10mm;
+}
+
+header .header-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
+}
+
+header img {
+    width: 50mm;
+    height: 50mm;
+    margin-bottom: 10mm;
+}
+
+header h1, header h2 {
+    margin: 0;
 }
 
 header h1 {
-    font-size: 24px;
-    color: #333;
+    font-size: 24pt;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+header h2 {
+    font-size: 18pt;
+    color: #555;
 }
 
-.user-info span {
-    font-size: 18px;
-    font-weight: bold;
+.student-info, .memorizing-records {
+    margin-bottom: 20mm;
 }
 
-.welcome-message {
-    text-align: center;
-    margin-bottom: 20px;
+.student-info h3, .memorizing-records h3 {
+    font-size: 18pt;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5mm;
+    margin-bottom: 5mm;
 }
 
-.welcome-message h1 {
-    font-size: 36px;
-    margin: 0;
+.student-info p {
+    font-size: 14pt;
+    margin: 5mm 0;
 }
 
-.section {
-    margin-bottom: 20px;
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.cards-container {
-    display: flex;
-    gap: 10px;
-}
-
-.card {
-    width: 20%;
-    height: 200px;
-    padding: 20px;
-    background-color: #f9f9f9;
+table, th, td {
     border: 1px solid #ddd;
-    border-radius: 10px;
-    text-align: center;
-    text-decoration: none;
-    color: #333;
-    transition: box-shadow 0.3s;
 }
 
-.card:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.card h2, .card h3 {
-    margin: 0;
-    margin-bottom: 10px;
-}
-
-.card button {
+th, td {
     padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.print-button-container {
+    text-align: center;
+    margin-top: 20mm;
+}
+
+.print-button-container button {
+    padding: 10px 20px;
     font-size: 16px;
-    border: none;
     background-color: #4CAF50;
     color: #fff;
+    border: none;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.card button:hover {
+.print-button-container button:hover {
     background-color: #45a049;
 }

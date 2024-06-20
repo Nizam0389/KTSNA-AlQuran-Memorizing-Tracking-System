@@ -1,90 +1,119 @@
+/* General styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
 }
 
-.container {
+.dashboard-container {
     display: flex;
-    background-image: url('../image/dashbg2.jpg'); /* Set background image */
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    height: 100%;
+    width: 100%;
 }
 
 .sidebar {
-    width: 20%;
-    background-color: #6e42f4;
-    color: white;
+    width: 250px;
+    background-color: #2c3e50;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding-top: 20px;
-    text-align: center;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar .profile img {
-    width: 100px; /* Increased logo size */
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
     margin-bottom: 20px;
 }
 
 .sidebar .menu {
     list-style: none;
     padding: 0;
+    width: 100%;
 }
 
 .sidebar .menu li {
-    padding: 0;
+    width: 100%;
 }
 
 .sidebar .menu .menu-btn {
     width: 100%;
-    padding: 20px 0; /* Increased padding for bigger button */
-    font-size: 18px; /* Increased font size */
-    background: none;
+    padding: 20px 30px;
+    font-size: 18px;
     border: none;
-    color: white;
-    text-align: center;
+    background: none;
+    color: #fff;
+    text-align: left;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.sidebar .menu .menu-btn:hover,
-.sidebar .menu .menu-btn.active {
-    background-color: #5432d3;
-}
-
-.content {
-    width: 80%;
-    padding: 20px;
-}
-
-.user-info {
+    transition: background-color 0.3s, padding-left 0.3s;
     display: flex;
     align-items: center;
 }
 
-.progress-container {
-    margin-top: 20px;
+.sidebar .menu .menu-btn:hover {
+    background-color: #34495e;
+    padding-left: 40px;
 }
 
-.progress-info {
-    background-color: #e0d4fc;
+.sidebar .menu .menu-btn i {
+    margin-right: 15px;
+    font-size: 24px;
+}
+
+.main-content {
+    flex-grow: 1;
     padding: 20px;
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.record {
+    border: 1px solid #ddd;
     border-radius: 10px;
-    text-align: center;
-    color: #6e42f4;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    font-size: 18px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 10px;
 }
 
-.progress-inputs {
-    text-align: center;
+.record-item {
+    margin-bottom: 10px;
 }
 
-.progress-inputs p {
-    margin: 5px 0;
-}
-
-.progress-inputs input {
-    width: 100px; /* Adjust width as needed */
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+.record-item strong {
+    color: #333;
 }
