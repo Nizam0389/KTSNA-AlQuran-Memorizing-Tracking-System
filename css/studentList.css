@@ -120,6 +120,7 @@ header h1 {
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 table, th, td {
@@ -137,4 +138,32 @@ th {
 
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+th.student-id, td.student-id {
+    width: 10%;
+}
+
+th.name, td.name {
+    width: 25%;
+}
+
+th.year, td.year {
+    width: 10%;
+}
+
+th.class, td.class {
+    width: 20%;
+}
+
+th.page, td.page {
+    width: 10%;
+}
+
+th.status, td.status {
+    width: 15%;
+}
+
+th.action, td.action {
+    width: 10%;
 }
