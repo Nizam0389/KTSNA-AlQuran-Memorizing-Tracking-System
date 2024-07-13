@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION["loggedin"] = true;
                     $_SESSION["id"] = $id;
                     $_SESSION["name"] = $name;
+                    $_SESSION["role"] = $role;  // Add role to session
                     header("location: studDash.php");
                 } else {
                     mysqli_stmt_bind_result($stmt, $id, $name, $type);
@@ -36,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION["loggedin"] = true;
                     $_SESSION["id"] = $id;
                     $_SESSION["name"] = $name;
+                    $_SESSION["role"] = $type;  // Add role to session
                     if ($type === 'ustaz') {
                         header("location: ustazDash.php");
                     } else if ($type === 'mudir') {
