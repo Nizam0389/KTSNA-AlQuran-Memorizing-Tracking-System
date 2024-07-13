@@ -98,7 +98,7 @@ if ($result = mysqli_query($dbCon, $sql)) {
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
                 <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
-                <li><button class="menu-btn" onclick="location.href='index.html'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
+                <li><button class="menu-btn" onclick="location.href='index.php'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
         <div class="main-content">

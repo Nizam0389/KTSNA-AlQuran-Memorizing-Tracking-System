@@ -5,7 +5,7 @@ require_once "dbConnect.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $_POST['role'];
     $username = $_POST['username'];
-    $password = $_POST['password'];
+    $password = md5($_POST['password']); // Hash the password with md5
 
     if ($role === 'student') {
         $sql = "SELECT student_id, student_name FROM student WHERE student_username = ? AND student_pass = ?";
