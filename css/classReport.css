@@ -1,0 +1,226 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar .menu li {
+    width: 100%;
+}
+
+.sidebar .menu .menu-btn {
+    width: 100%;
+    padding: 20px 30px;
+    font-size: 18px;
+    border: none;
+    background: none;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s, padding-left 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .menu .menu-btn:hover {
+    background-color: #34495e;
+    padding-left: 40px;
+}
+
+.sidebar .menu .menu-btn i {
+    margin-right: 15px;
+    font-size: 24px;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info span {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-container input, .search-container select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.student-list {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+th.student-id, td.student-id {
+    width: 10%;
+}
+
+th.name, td.name {
+    width: 25%;
+}
+
+th.year, td.year {
+    width: 10%;
+}
+
+th.class, td.class {
+    width: 20%;
+}
+
+th.page, td.page {
+    width: 10%;
+}
+
+th.status, td.status {
+    width: 15%;
+}
+
+th.action, td.action {
+    width: 10%;
+}
+
+/* Additional styling for report form */
+.report-form {
+    margin-bottom: 20px;
+}
+
+.report-form .form-group {
+    margin-bottom: 15px;
+}
+
+.report-form .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.report-form .form-group select {
+    width: 20%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.report-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.report-form button:hover {
+    background-color: #45a049;
+}
+
+/* Additional styling for print button */
+.print-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.print-button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.print-button-container button:hover {
+    background-color: #45a049;
+}

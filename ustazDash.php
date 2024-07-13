@@ -54,7 +54,6 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
             </header>
             <div class="welcome-message">
                 <h1>Welcome back, <?php echo htmlspecialchars($staff_name); ?>!</h1>
-                <p>Always stay updated in your ustaz portal</p>
             </div>
             <div class="section">
                 <h2>Record</h2>

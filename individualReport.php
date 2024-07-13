@@ -162,9 +162,9 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                                 <td class="name"><?php echo htmlspecialchars($student['student_name']); ?></td>
                                 <td class="year"><?php echo htmlspecialchars($student['year']); ?></td>
                                 <td class="class"><?php echo htmlspecialchars($student['class_name']); ?></td>
-                                <td class="action"><button onclick="location.href='studentReport.php?student_id=<?php echo $student['student_id']; ?>'">Generate Report</button></td>
+                                <td><a href="studProgReportStaff.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endforeach; ?> 
                     </tbody>
                 </table>
             </div>

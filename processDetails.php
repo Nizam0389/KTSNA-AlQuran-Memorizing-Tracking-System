@@ -136,4 +136,10 @@ function getSessionDescription($session) {
     ];
     return isset($sessions[$session]) ? $sessions[$session] : 'Unknown Session';
 }
+
+if (!function_exists('getStatusDescription')) {
+    function getStatusDescription($status) {
+        return $status == 'p' ? 'Pass' : 'Not Pass';
+    }
+}
 ?>
