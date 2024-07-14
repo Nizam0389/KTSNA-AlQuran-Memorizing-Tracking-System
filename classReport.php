@@ -22,40 +22,35 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
     }
 }
 
-// Fetch all classes and years
-$class_sql = "SELECT DISTINCT class_id, class_name, year FROM class ORDER BY year, class_name";
+// Fetch all classes with combined data
+$class_sql = "SELECT class_id, CONCAT(year, ' ', class_name) AS class_full_name FROM class ORDER BY year, class_name";
 $classes = [];
-$years = [];
 if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $class_id, $class_name, $year);
+        mysqli_stmt_bind_result($stmt, $class_id, $class_full_name);
         while (mysqli_stmt_fetch($stmt)) {
-            $classes[] = ['class_id' => $class_id, 'class_name' => $class_name, 'year' => $year];
-            if (!in_array($year, $years)) {
-                $years[] = $year;
-            }
+            $classes[] = ['class_id' => $class_id, 'class_full_name' => $class_full_name];
         }
         mysqli_stmt_close($stmt);
     }
 }
 
 // Process form submission
-$class_id = $year = '';
+$class_id = '';
 $students = [];
 $class_name_full = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
-    $year = $_POST['year'];
 
-    // Fetch students for the selected class and year
+    // Fetch students for the selected class
     $student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
                     FROM memorizing_record 
                     INNER JOIN student ON memorizing_record.student_id = student.student_id 
                     INNER JOIN class ON student.class_id = class.class_id 
-                    WHERE student.class_id = ? AND class.year = ?";
+                    WHERE student.class_id = ?";
 
     if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
-        mysqli_stmt_bind_param($stmt, "si", $class_id, $year);
+        mysqli_stmt_bind_param($stmt, "s", $class_id);
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $status);
             while (mysqli_stmt_fetch($stmt)) {
@@ -111,20 +106,11 @@ function getStatusDescription($status) {
             <div class="report-form">
                 <form method="post" action="classReport.php">
                     <div class="form-group">
-                        <label for="year">Select Year:</label>
-                        <select id="year" name="year" required>
-                            <option value="">--Select Year--</option>
-                            <?php foreach ($years as $year_option): ?>
-                                <option value="<?php echo htmlspecialchars($year_option); ?>" <?php echo $year_option == $year ? 'selected' : ''; ?>><?php echo htmlspecialchars($year_option); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="class">Select Class:</label>
                         <select id="class" name="class" required>
                             <option value="">--Select Class--</option>
                             <?php foreach ($classes as $class): ?>
-                                <option value="<?php echo htmlspecialchars($class['class_id']); ?>" <?php echo $class['class_id'] == $class_id ? 'selected' : ''; ?>><?php echo htmlspecialchars($class['class_name']); ?></option>
+                                <option value="<?php echo htmlspecialchars($class['class_id']); ?>" <?php echo $class['class_id'] == $class_id ? 'selected' : ''; ?>><?php echo htmlspecialchars($class['class_full_name']); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -134,11 +120,11 @@ function getStatusDescription($status) {
             <?php if (!empty($students)): ?>
                 <div class="report-container">
                     <header>
-                        <!-- <div class="header-content">
-                            <img src="image/ktsna logo.png" alt="KTSNA Logo">
+                        <div class="header-content">
+                            <!-- <img src="image/ktsna logo.png" alt="KTSNA Logo"> -->
                             <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                             <h2>Class Report for <?php echo htmlspecialchars($class_name_full); ?></h2>
-                        </div> -->
+                        </div>
                     </header>
                     <section class="memorizing-records">
                         <h3>Student Memorizing Records</h3>
@@ -164,7 +150,7 @@ function getStatusDescription($status) {
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>&year=<?php echo $year; ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>
