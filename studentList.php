@@ -136,7 +136,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
             </header>
             <div class="search-container">
                 <input type="text" id="searchInput" onkeyup="searchStudent()" placeholder="Search for students..">
-                <select id="yearFilter" onchange="filterClass()">
+                <!-- <select id="yearFilter" onchange="filterClass()">
                     <option value="all">All Years</option>
                     <?php foreach ($years as $year): ?>
                         <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
@@ -147,7 +147,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                     <?php foreach ($classes as $class): ?>
                         <option value="<?php echo htmlspecialchars($class['class_name']); ?>"><?php echo htmlspecialchars($class['class_name']); ?></option>
                     <?php endforeach; ?>
-                </select>
+                </select> -->
             </div>
             <div class="student-list">
                 <table id="studentTable">
