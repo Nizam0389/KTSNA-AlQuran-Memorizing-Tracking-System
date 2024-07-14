@@ -83,6 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Update Student Record - KTSNA Al Quran Memorizing Tracking System</title>
     <link rel="stylesheet" href="css/updStud.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        
+    </script>
     <style>
         select#status, select#session {
             width: 100%;
@@ -95,6 +99,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
     <script>
+function logout() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the system.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Logging Out!',
+                        text: 'You are being logged out.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                    setTimeout(() => {
+                        window.location.href = 'logout.php';
+                    }, 1000);
+                }
+            });
+        }
+
         function confirmUpdate() {
             return confirm("Are you sure you want to update this record?");
         }
