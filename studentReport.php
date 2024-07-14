@@ -26,13 +26,16 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
 }
 
 // Fetch memorizing records for the logged-in student
-$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff_id FROM memorizing_record WHERE student_id = ?";
+$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff.staff_name 
+                FROM memorizing_record 
+                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id 
+                WHERE memorizing_record.student_id = ?";
         
 $records = [];
 if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_id);
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_name);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
             $calculated_juzu = calculateJuzu($page);
@@ -47,7 +50,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                 'date' => $date,
                 'session' => $session_desc,
                 'status' => $status_desc,
-                'staff_id' => $staff_id
+                'staff_name' => $staff_name
             ];
         }
         mysqli_stmt_close($stmt);
@@ -91,7 +94,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                             <th>Date</th>
                             <th>Session</th>
                             <th>Status</th>
-                            <th>Staff ID</th>
+                            <th>Staff Name</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,7 +107,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                                 <td><?php echo htmlspecialchars($record['date']); ?></td>
                                 <td><?php echo htmlspecialchars($record['session']); ?></td>
                                 <td><?php echo htmlspecialchars($record['status']); ?></td>
-                                <td><?php echo htmlspecialchars($record['staff_id']); ?></td>
+                                <td><?php echo htmlspecialchars($record['staff_name']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
