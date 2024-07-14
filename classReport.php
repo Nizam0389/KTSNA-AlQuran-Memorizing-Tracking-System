@@ -139,7 +139,6 @@ function getStatusDescription($status) {
                 <div class="report-container">
                     <header>
                         <div class="header-content">
-                            <!-- <img src="image/ktsna logo.png" alt="KTSNA Logo"> -->
                             <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                             <h2>Class Report for <?php echo htmlspecialchars($class_name_full); ?></h2>
                         </div>
@@ -168,7 +167,7 @@ function getStatusDescription($status) {
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>

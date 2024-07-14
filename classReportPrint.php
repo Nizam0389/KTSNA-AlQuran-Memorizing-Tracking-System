@@ -10,26 +10,25 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 require_once "dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
-// Ensure class ID and year are provided
-if (!isset($_GET['class_id']) || !isset($_GET['year'])) {
+// Ensure class ID and class_name_full are provided
+if (!isset($_GET['class_id']) || !isset($_GET['class_name_full'])) {
     header("location: classReport.php");
     exit;
 }
 
 $class_id = $_GET['class_id'];
-$year = $_GET['year'];
+$class_name_full = urldecode($_GET['class_name_full']);
 
-// Fetch students for the selected class and year
+// Fetch students for the selected class
 $student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
                 FROM memorizing_record 
                 INNER JOIN student ON memorizing_record.student_id = student.student_id 
                 INNER JOIN class ON student.class_id = class.class_id 
-                WHERE student.class_id = ? AND class.year = ?";
+                WHERE student.class_id = ?";
 
 $students = [];
-$class_name_full = '';
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
-    mysqli_stmt_bind_param($stmt, "si", $class_id, $year);
+    mysqli_stmt_bind_param($stmt, "s", $class_id);
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $status);
         while (mysqli_stmt_fetch($stmt)) {
@@ -42,7 +41,6 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                 'status' => getStatusDescription($status)
             ];
         }
-        $class_name_full = $year . ' ' . $class_name;
         mysqli_stmt_close($stmt);
     }
 }
@@ -54,7 +52,6 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Report Print - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/classReportPrint.css">
     <style>
         /* A4 layout styling */
         @media print {
@@ -66,14 +63,26 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                 margin: 1cm;
             }
         }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            box-sizing: border-box;
+        }
         .report-container {
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
             background-color: #fff;
             width: 100%;
-            max-width: 800px;
+            height: 100%;
+            max-width: 21cm;
+            max-height: 29.7cm;
             margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            overflow: hidden;
         }
         .header-content {
             text-align: center;
@@ -85,11 +94,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         .header-content h1, .header-content h2 {
             margin: 10px 0;
         }
-        .student-info, .memorizing-records {
+        .memorizing-records {
             margin-bottom: 20px;
-        }
-        .student-info p, .memorizing-records p {
-            margin: 5px 0;
         }
         table {
             width: 100%;
