@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || ($_SESSION["role"] !== 'ustaz' && $_SESSION["role"] !== 'mudir')) {
+// Check if the user is logged in, if not then redirect them to login page
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
     header("location: login.php");
     exit;
 }
@@ -10,12 +11,12 @@ require_once "dbConnect.php";
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
-$sql = "SELECT staff_name, staff_username, staff_type FROM staff WHERE staff_id = ?";
+$sql = "SELECT staff_name, staff_username FROM staff WHERE staff_id = ?";
 
 if ($stmt = mysqli_prepare($dbCon, $sql)) {
     mysqli_stmt_bind_param($stmt, "s", $staff_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $staff_name, $staff_username, $staff_type);
+        mysqli_stmt_bind_result($stmt, $staff_name, $staff_username);
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
     }
@@ -57,9 +58,7 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
             </div>
             <ul class="menu">
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <?php if ($_SESSION["role"] === 'ustaz'): ?>
-                    <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <?php endif; ?>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
