@@ -65,6 +65,24 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
     <link rel="stylesheet" href="css/studentReport.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function logout() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the system.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "logout.php";
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="report-container">

@@ -2,14 +2,13 @@
 session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'mudir') {
     header("location: login.php");
     exit;
 }
 
 require_once "dbConnect.php";
 
-// Fetch staff details from the database
 $staff_id = $_SESSION["id"];
 $sql = "SELECT staff_name, staff_username FROM staff WHERE staff_id = ?";
 
@@ -57,9 +56,8 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
                 <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -73,10 +71,10 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
             <div class="section">
                 <h2>Reports</h2>
                 <div class="cards-container">
-                    <a href="individualReport.php" class="card">
+                    <a href="individualReportMudir.php" class="card">
                         <h2>Individual Report</h2>
                     </a>
-                    <a href="classReport.php" class="card">
+                    <a href="classReportMudir.php" class="card">
                         <h2>Class Report</h2>
                     </a>
                 </div>
