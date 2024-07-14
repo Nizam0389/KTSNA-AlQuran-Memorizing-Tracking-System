@@ -83,6 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Update Student Record - KTSNA Al Quran Memorizing Tracking System</title>
     <link rel="stylesheet" href="css/updStud.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        
+    </script>
     <style>
         select#status, select#session {
             width: 100%;
@@ -95,8 +99,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
     <script>
+function logout() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the system.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Logging Out!',
+                        text: 'You are being logged out.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                    setTimeout(() => {
+                        window.location.href = 'logout.php';
+                    }, 1000);
+                }
+            });
+        }
+
         function confirmUpdate() {
             return confirm("Are you sure you want to update this record?");
+        }
+
+        function confirmUpdate(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Do you want to save the changes?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Save",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Saved!',
+                        text: 'Your changes have been saved.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            event.target.submit();
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire("Changes are not saved", "", "info");
+                }
+            });
         }
 
         function validatePageInput() {
@@ -137,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php if (!empty($records)): ?>
                     <?php foreach ($records as $record): ?>
                         <div class="record">
-                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate() && validatePageInput();">
+                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate(event) && validatePageInput();">
                                 <input type="hidden" name="memo_id" value="<?php echo $record['memo_id']; ?>">
                                 <label for="page">Page:</label>
                                 <input type="number" id="page" name="page" value="<?php echo htmlspecialchars($record['page']); ?>" min="1" max="604" required>

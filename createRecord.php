@@ -78,6 +78,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>KTSNA Al Quran Memorizing Tracking System - Create Record</title>
     <link rel="stylesheet" href="css/studDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function logout() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the system.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Logging Out!',
+                        text: 'You are being logged out.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                    setTimeout(() => {
+                        window.location.href = 'logout.php';
+                    }, 1000);
+                }
+            });
+        }
+    </script>
     <style>
         form {
             max-width: 600px;
@@ -136,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
                 <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
-                <li><button class="menu-btn" onclick="location.href='index.php'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
+                <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
         <div class="main-content">

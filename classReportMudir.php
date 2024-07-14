@@ -95,7 +95,16 @@ function getStatusDescription($status) {
                 confirmButtonText: "Yes, logout"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "logout.php";
+                    Swal.fire({
+                        title: 'Logging Out!',
+                        text: 'You are being logged out.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                    setTimeout(() => {
+                        window.location.href = 'logout.php';
+                    }, 1000);
                 }
             });
         }
