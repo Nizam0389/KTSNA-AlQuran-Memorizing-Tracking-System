@@ -59,13 +59,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $surah = calculateSurah($page);
     $date = date('Y-m-d');
 
-    $insert_sql = "INSERT INTO memorizing_record (memo_id, page, juzu, surah, date, session, status, student_id, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    if ($stmt = mysqli_prepare($dbCon, $insert_sql)) {
-        mysqli_stmt_bind_param($stmt, "siiisssss", $new_memo_id, $page, $juzu, $surah, $date, $session, $status, $student_id, $staff_id);
-        if (mysqli_stmt_execute($stmt)) {
-            header("location: uRecord.php");
-            exit;
+    if ($page >= 1 && $page <= 604) {
+        $insert_sql = "INSERT INTO memorizing_record (memo_id, page, juzu, surah, date, session, status, student_id, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        if ($stmt = mysqli_prepare($dbCon, $insert_sql)) {
+            mysqli_stmt_bind_param($stmt, "siiisssss", $new_memo_id, $page, $juzu, $surah, $date, $session, $status, $student_id, $staff_id);
+            if (mysqli_stmt_execute($stmt)) {
+                header("location: uRecord.php");
+                exit;
+            }
         }
+    } else {
+        $error_message = "Page number must be between 1 and 604.";
     }
 }
 ?>
@@ -79,7 +83,76 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/studDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+            text-align: center;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+<script>
         function logout() {
             Swal.fire({
                 title: "Are you sure?",
@@ -104,54 +177,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
         }
+
+        function confirmUpdate(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Are you  confirm to create new record?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Save",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Saved!',
+                        text: 'Record has been created.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            event.target.submit();
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire("Record are not created", "", "info");
+                }
+            });
+        }
+
+        function validatePageInput() {
+            const pageInput = document.getElementById('page');
+            if (pageInput.value < 1 || pageInput.value > 604) {
+                alert("Page value must be between 1 and 604.");
+                return false;
+            }
+            return true;
+        }
     </script>
-    <style>
-        form {
-            max-width: 600px;
-            margin: auto;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .form-group button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .form-group button:hover {
-            background-color: #45a049;
-        }
-        .back-button {
-            display: inline-block;
-            margin: 20px 0;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .back-button:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -174,28 +235,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </header>
             <a href="newRecord.php" class="back-button">Back to New Record</a>
-            <h2>Create Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h2>
-            <form method="post" action="createRecord.php?student_id=<?php echo $student_id; ?>">
-                <div class="form-group">
-                    <label for="page">Page:</label>
-                    <input type="number" id="page" name="page" required>
-                </div>
-                <div class="form-group">
-                    <label for="session">Session:</label>
-                    <select id="session" name="session" required>
-                        <option value="d">Day</option>
-                        <option value="n">Night</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select id="status" name="status" required>
-                        <option value="p">Pass</option>
-                        <option value="f">Not Pass</option>
-                    </select>
-                </div>
-                <button type="submit">Create Record</button>
-            </form>
+            <div class="form-container">
+                <h2>Create Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h2>
+                <?php if (isset($error_message)): ?>
+                    <div class="error-message"><?php echo $error_message; ?></div>
+                <?php endif; ?>
+                <form method="post" action="createRecord.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate(event) && validatePageInput();">
+                    <div class="form-group">
+                        <label for="page">Page:</label>
+                        <input type="number" id="page" name="page" min="1" max="604" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="session">Session:</label>
+                        <select id="session" name="session" required>
+                            <option value="d">Day</option>
+                            <option value="n">Night</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="p">Pass</option>
+                            <option value="f">Not Pass</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">Create Record</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <script src="/js/scripts.js"></script>

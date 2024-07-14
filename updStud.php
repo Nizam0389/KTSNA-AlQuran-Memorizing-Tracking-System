@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
     <script>
-function logout() {
+        function logout() {
             Swal.fire({
                 title: "Are you sure?",
                 text: "You will be logged out of the system.",
