@@ -123,7 +123,7 @@ function getStatusDescription($status) {
             <div class="report-form">
                 <form method="post" action="classReportMudir.php">
                     <div class="form-group">
-                        <label for="class">Select Class:</label>
+                        <label for="class"><h3>Select Class:</h3></label>
                         <select id="class" name="class" required>
                             <option value="">--Select Class--</option>
                             <?php foreach ($classes as $class): ?>
