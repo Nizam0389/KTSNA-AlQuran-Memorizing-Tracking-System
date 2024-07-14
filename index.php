@@ -17,7 +17,7 @@
     <header>
         <div class="header-content">
             <img src="image/ktsna logo.png" alt="KTSNA Logo" class="logo">
-            <h1>KTSNA Homepage</h1>
+            <h1 style="color: white;">KTSNA Homepage</h1>
             <button onclick="location.href='login.php'" class="login-btn">Login</button>
         </div>
     </header>
