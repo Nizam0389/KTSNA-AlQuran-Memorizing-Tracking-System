@@ -128,6 +128,32 @@ function logout() {
             return confirm("Are you sure you want to update this record?");
         }
 
+        function confirmUpdate(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Do you want to save the changes?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Save",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Saved!',
+                        text: 'Your changes have been saved.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        timerProgressBar: true,
+                        willClose: () => {
+                            event.target.submit();
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire("Changes are not saved", "", "info");
+                }
+            });
+        }
+
         function validatePageInput() {
             const pageInput = document.getElementById('page');
             if (pageInput.value < 1 || pageInput.value > 604) {
@@ -166,7 +192,7 @@ function logout() {
                 <?php if (!empty($records)): ?>
                     <?php foreach ($records as $record): ?>
                         <div class="record">
-                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate() && validatePageInput();">
+                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate(event) && validatePageInput();">
                                 <input type="hidden" name="memo_id" value="<?php echo $record['memo_id']; ?>">
                                 <label for="page">Page:</label>
                                 <input type="number" id="page" name="page" value="<?php echo htmlspecialchars($record['page']); ?>" min="1" max="604" required>
