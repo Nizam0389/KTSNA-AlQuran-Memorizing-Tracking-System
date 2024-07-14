@@ -24,20 +24,21 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
 }
 
 // Fetch all students
-$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year 
+$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, student.class_id 
                 FROM student 
                 INNER JOIN class ON student.class_id = class.class_id";
 
 $students = [];
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year);
+        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $class_id);
         while (mysqli_stmt_fetch($stmt)) {
             $students[] = [
                 'student_id' => $student_id,
                 'student_name' => $student_name,
                 'class_name' => $class_name,
-                'year' => $year
+                'year' => $year,
+                'class_id' => $class_id
             ];
         }
         mysqli_stmt_close($stmt);
@@ -47,15 +48,11 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
 // Fetch all classes and years
 $class_sql = "SELECT DISTINCT class_id, class_name, year FROM class ORDER BY year, class_name";
 $classes = [];
-$years = [];
 if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $class_id, $class_name, $year);
         while (mysqli_stmt_fetch($stmt)) {
             $classes[] = ['class_id' => $class_id, 'class_name' => $class_name, 'year' => $year];
-            if (!in_array($year, $years)) {
-                $years[] = $year;
-            }
         }
         mysqli_stmt_close($stmt);
     }
@@ -68,9 +65,42 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Individual Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/studentList.css">
+    <link rel="stylesheet" href="css/individual.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script>
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        function displayPage(page) {
+            const table = document.getElementById('studentTable');
+            const tr = table.getElementsByTagName('tr');
+            const totalRows = tr.length;
+            const totalPages = Math.ceil((totalRows - 1) / rowsPerPage);
+
+            for (let i = 1; i < totalRows; i++) {
+                tr[i].style.display = 'none';
+            }
+
+            for (let i = (page - 1) * rowsPerPage + 1; i < page * rowsPerPage + 1 && i < totalRows; i++) {
+                tr[i].style.display = '';
+            }
+
+            document.getElementById('currentPage').textContent = page;
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('prevBtn').disabled = page === 1;
+            document.getElementById('nextBtn').disabled = page === totalPages;
+        }
+
+        function nextPage() {
+            currentPage++;
+            displayPage(currentPage);
+        }
+
+        function prevPage() {
+            currentPage--;
+            displayPage(currentPage);
+        }
+
         function searchStudent() {
             let input = document.getElementById('searchInput').value.toUpperCase();
             let table = document.getElementById('studentTable');
@@ -86,27 +116,30 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                     }
                 }
             }
+            //displayPage(1);
         }
 
         function filterClass() {
-            let yearFilter = document.getElementById('yearFilter').value;
             let classFilter = document.getElementById('classFilter').value;
             let table = document.getElementById('studentTable');
             let tr = table.getElementsByTagName('tr');
             for (let i = 1; i < tr.length; i++) {
-                let yearTd = tr[i].getElementsByTagName('td')[2];
-                let classTd = tr[i].getElementsByTagName('td')[3];
-                if (yearTd && classTd) {
-                    let yearTextValue = yearTd.textContent || yearTd.innerText;
+                let classTd = tr[i].getElementsByTagName('td')[4];
+                if (classTd) {
                     let classTextValue = classTd.textContent || classTd.innerText;
-                    if ((yearFilter === "all" || yearTextValue === yearFilter) && (classFilter === "all" || classTextValue === classFilter)) {
+                    if (classFilter === "all" || classTextValue === classFilter) {
                         tr[i].style.display = '';
                     } else {
                         tr[i].style.display = 'none';
                     }
                 }
             }
+            displayPage(1);
         }
+
+        window.onload = function() {
+            displayPage(1);
+        };
     </script>
 </head>
 <body>
@@ -131,16 +164,12 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
             </header>
             <div class="search-container">
                 <input type="text" id="searchInput" onkeyup="searchStudent()" placeholder="Search for students..">
-                <select id="yearFilter" onchange="filterClass()">
-                    <option value="all">All Years</option>
-                    <?php foreach ($years as $year): ?>
-                        <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                    <?php endforeach; ?>
-                </select>
                 <select id="classFilter" onchange="filterClass()">
                     <option value="all">All Classes</option>
                     <?php foreach ($classes as $class): ?>
-                        <option value="<?php echo htmlspecialchars($class['class_name']); ?>"><?php echo htmlspecialchars($class['class_name']); ?></option>
+                        <option value="<?php echo htmlspecialchars($class['class_id']); ?>">
+                            <?php echo htmlspecialchars($class['year'] . ' ' . $class['class_name']); ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -152,6 +181,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                             <th class="name">Name</th>
                             <th class="year">Year</th>
                             <th class="class">Class</th>
+                            <th class="class-id" style="display:none;">Class ID</th>
                             <th class="action">Action</th>
                         </tr>
                     </thead>
@@ -162,11 +192,17 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                                 <td class="name"><?php echo htmlspecialchars($student['student_name']); ?></td>
                                 <td class="year"><?php echo htmlspecialchars($student['year']); ?></td>
                                 <td class="class"><?php echo htmlspecialchars($student['class_name']); ?></td>
+                                <td class="class-id" style="display:none;"><?php echo htmlspecialchars($student['class_id']); ?></td>
                                 <td><a href="studProgReportStaff.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
                             </tr>
                         <?php endforeach; ?> 
                     </tbody>
                 </table>
+            </div>
+            <div class="pagination">
+                <button id="prevBtn" onclick="prevPage()" disabled>Previous</button>
+                <span>Page <span id="currentPage"></span> of <span id="totalPages"></span></span>
+                <button id="nextBtn" onclick="nextPage()">Next</button>
             </div>
         </div>
     </div>
