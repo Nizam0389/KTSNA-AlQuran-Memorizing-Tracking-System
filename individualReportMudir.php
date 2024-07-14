@@ -96,19 +96,20 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
 
         let currentPage = 1;
         const rowsPerPage = 10;
+        let filteredRows = [];
 
         function displayPage(page) {
             const table = document.getElementById('studentTable');
-            const tr = table.getElementsByTagName('tr');
+            const tr = filteredRows.length > 0 ? filteredRows : table.getElementsByTagName('tr');
             const totalRows = tr.length;
             const totalPages = Math.ceil((totalRows - 1) / rowsPerPage);
 
             for (let i = 1; i < totalRows; i++) {
-                tr[i].style.display = 'none';
+                if (tr[i].style) tr[i].style.display = 'none';
             }
 
             for (let i = (page - 1) * rowsPerPage + 1; i < page * rowsPerPage + 1 && i < totalRows; i++) {
-                tr[i].style.display = '';
+                if (tr[i].style) tr[i].style.display = '';
             }
 
             document.getElementById('currentPage').textContent = page;
@@ -131,39 +132,50 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
             let input = document.getElementById('searchInput').value.toUpperCase();
             let table = document.getElementById('studentTable');
             let tr = table.getElementsByTagName('tr');
+            filteredRows = [tr[0]]; // Always include the header row
+
             for (let i = 1; i < tr.length; i++) {
                 let td = tr[i].getElementsByTagName('td')[1];
                 if (td) {
                     let textValue = td.textContent || td.innerText;
                     if (textValue.toUpperCase().indexOf(input) > -1) {
+                        filteredRows.push(tr[i]);
                         tr[i].style.display = '';
                     } else {
                         tr[i].style.display = 'none';
                     }
                 }
             }
-            //displayPage(1);
+
+            currentPage = 1;
+            displayPage(1);
         }
 
         function filterClass() {
             let classFilter = document.getElementById('classFilter').value;
             let table = document.getElementById('studentTable');
             let tr = table.getElementsByTagName('tr');
+            filteredRows = [tr[0]]; // Always include the header row
+
             for (let i = 1; i < tr.length; i++) {
-                let classTd = tr[i].getElementsByTagName('td')[4];
+                let classTd = tr[i].getElementsByTagName('td')[4]; // Index 4 is for class_id
                 if (classTd) {
                     let classTextValue = classTd.textContent || classTd.innerText;
                     if (classFilter === "all" || classTextValue === classFilter) {
+                        filteredRows.push(tr[i]);
                         tr[i].style.display = '';
                     } else {
                         tr[i].style.display = 'none';
                     }
                 }
             }
+
+            currentPage = 1;
             displayPage(1);
         }
 
         window.onload = function() {
+            filteredRows = Array.from(document.getElementById('studentTable').getElementsByTagName('tr'));
             displayPage(1);
         };
     </script>
