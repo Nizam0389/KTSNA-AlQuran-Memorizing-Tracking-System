@@ -63,6 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style>
         /* Basic styling for demonstration purposes */
         body {
+            background-image: url('../image/pexels-photo-2982449.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
