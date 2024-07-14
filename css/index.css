@@ -45,7 +45,7 @@ header {
 }
 
 .content {
-    background-image: url('../image/pexels-photo-2982449.png');
+    background-image: url('../image/index_bg.png');
     background-size: cover;
     width: 100%;
     height: calc(100% - 100px);
