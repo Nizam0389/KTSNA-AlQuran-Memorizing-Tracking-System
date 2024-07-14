@@ -1,6 +1,3 @@
-database
-
-
 -- Create the database
 CREATE DATABASE ktsna_quran;
 
@@ -20,7 +17,7 @@ CREATE TABLE staff (
     staff_id VARCHAR(5) PRIMARY KEY,
     staff_name VARCHAR(50),
     staff_username VARCHAR(20),
-    staff_pass VARCHAR(20),
+    staff_pass VARCHAR(255),
     staff_type VARCHAR(30)
 );
 
@@ -29,7 +26,7 @@ CREATE TABLE student (
     student_id VARCHAR(5) PRIMARY KEY,
     student_name VARCHAR(50),
     student_username VARCHAR(20),
-    student_pass VARCHAR(20),
+    student_pass VARCHAR(255),
     class_id VARCHAR(5),
     FOREIGN KEY (class_id) REFERENCES class(class_id)
 );
