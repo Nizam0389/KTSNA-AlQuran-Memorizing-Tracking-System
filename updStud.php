@@ -55,16 +55,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $new_session = $_POST['session'];
     $memo_id = $_POST['memo_id'];
 
-    $new_juzu = calculateJuzu($new_page);
-    $new_surah = calculateSurah($new_page);
-    $new_date = date('Y-m-d');
+    // Validate page input
+    if ($new_page < 1 || $new_page > 604) {
+        echo "<script>alert('Page value must be between 1 and 604.');</script>";
+    } else {
+        $new_juzu = calculateJuzu($new_page);
+        $new_surah = calculateSurah($new_page);
+        $new_date = date('Y-m-d');
 
-    $update_sql = "UPDATE memorizing_record SET page = ?, juzu = ?, surah = ?, date = ?, status = ?, session = ? WHERE memo_id = ?";
-    if ($stmt = mysqli_prepare($dbCon, $update_sql)) {
-        mysqli_stmt_bind_param($stmt, "iiissss", $new_page, $new_juzu, $new_surah, $new_date, $new_status, $new_session, $memo_id);
-        if (mysqli_stmt_execute($stmt)) {
-            header("Location: " . $_SERVER['REQUEST_URI']);
-            exit;
+        $update_sql = "UPDATE memorizing_record SET page = ?, juzu = ?, surah = ?, date = ?, status = ?, session = ? WHERE memo_id = ?";
+        if ($stmt = mysqli_prepare($dbCon, $update_sql)) {
+            mysqli_stmt_bind_param($stmt, "iiissss", $new_page, $new_juzu, $new_surah, $new_date, $new_status, $new_session, $memo_id);
+            if (mysqli_stmt_execute($stmt)) {
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit;
+            }
         }
     }
 }
@@ -93,6 +98,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function confirmUpdate() {
             return confirm("Are you sure you want to update this record?");
         }
+
+        function validatePageInput() {
+            const pageInput = document.getElementById('page');
+            if (pageInput.value < 1 || pageInput.value > 604) {
+                alert("Page value must be between 1 and 604.");
+                return false;
+            }
+            return true;
+        }
     </script>
 </head>
 <body>
@@ -112,20 +126,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <header>
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <div class="user-info">
-                    <span><?php echo isset($_SESSION["username"]) ? htmlspecialchars($_SESSION["username"]) : 'Unknown'; ?></span>
+                    <!-- <span><?php echo isset($_SESSION["username"]) ? htmlspecialchars($_SESSION["username"]) : 'Unknown'; ?></span> -->
                     <span><?php echo isset($_SESSION["name"]) ? htmlspecialchars($_SESSION["name"]) : 'Unknown'; ?></span>
                 </div>
             </header>
+            
             <div class="content-container">
                 <button onclick="location.href='studentList.php'" style="margin-bottom: 20px;">Back to Student List</button>
-                <h1>Update Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h1>
+                <h2>Update Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h2>
                 <?php if (!empty($records)): ?>
                     <?php foreach ($records as $record): ?>
                         <div class="record">
-                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate();">
+                            <form method="post" action="updStud.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate() && validatePageInput();">
                                 <input type="hidden" name="memo_id" value="<?php echo $record['memo_id']; ?>">
                                 <label for="page">Page:</label>
-                                <input type="number" id="page" name="page" value="<?php echo htmlspecialchars($record['page']); ?>" required>
+                                <input type="number" id="page" name="page" value="<?php echo htmlspecialchars($record['page']); ?>" min="1" max="604" required>
                                 
                                 <label for="status">Status:</label>
                                 <select id="status" name="status">
@@ -160,4 +175,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
-
