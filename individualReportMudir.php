@@ -230,7 +230,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                                 <td class="year"><?php echo htmlspecialchars($student['year']); ?></td>
                                 <td class="class"><?php echo htmlspecialchars($student['class_name']); ?></td>
                                 <td class="class-id" style="display:none;"><?php echo htmlspecialchars($student['class_id']); ?></td>
-                                <td><a href="studProgReportStaff.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
+                                <td><a href="studProgReportMudir.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
                             </tr>
                         <?php endforeach; ?> 
                     </tbody>
