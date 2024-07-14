@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-// Check if the user is logged in, if not then redirect them to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || ($_SESSION["role"] !== 'ustaz' && $_SESSION["role"] !== 'mudir')) {
     header("location: login.php");
     exit;
 }
@@ -31,6 +30,24 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
     <title>Generate Reports - KTSNA Al Quran Memorizing Tracking System</title>
     <link rel="stylesheet" href="css/ustazDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        function logout() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the system.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "logout.php";
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -42,7 +59,7 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
                 <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
-                <li><button class="menu-btn" onclick="location.href='index.php'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
+                <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
         <div class="main-content">

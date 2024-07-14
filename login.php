@@ -5,19 +5,19 @@ require_once "dbConnect.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $_POST['role'];
     $username = $_POST['username'];
-    $password = md5($_POST['password']); // Hash the password with md5
+    $password = md5($_POST['password']);
 
     if ($role === 'student') {
         $sql = "SELECT student_id, student_name FROM student WHERE student_username = ? AND student_pass = ?";
     } else {
-        $sql = "SELECT staff_id, staff_name, staff_type FROM staff WHERE staff_username = ? AND staff_pass = ? AND staff_type = ?";
+        $sql = "SELECT staff_id, staff_name, staff_type FROM staff WHERE staff_username = ? AND staff_pass = ?";
     }
 
     if ($stmt = mysqli_prepare($dbCon, $sql)) {
         if ($role === 'student') {
             mysqli_stmt_bind_param($stmt, "ss", $username, $password);
         } else {
-            mysqli_stmt_bind_param($stmt, "sss", $username, $password, $role);
+            mysqli_stmt_bind_param($stmt, "ss", $username, $password);
         }
 
         if (mysqli_stmt_execute($stmt)) {
@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION["name"] = $name;
                     $_SESSION["role"] = $role;  // Add role to session
                     header("location: studDash.php");
+                    exit();
                 } else {
                     mysqli_stmt_bind_result($stmt, $id, $name, $type);
                     mysqli_stmt_fetch($stmt);
@@ -38,17 +39,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION["id"] = $id;
                     $_SESSION["name"] = $name;
                     $_SESSION["role"] = $type;  // Add role to session
-                    if ($type === 'ustaz') {
+                    if ($type === 'ustaz' || $type === 'mudir') {
                         header("location: ustazDash.php");
-                    } else if ($type === 'mudir') {
-                        header("location: mudirDash.php");
+                        exit();
+                    } else {
+                        $login_err = "Invalid user role."; // Handle unexpected roles
                     }
                 }
             } else {
                 $login_err = "Invalid username or password.";
             }
+        } else {
+            $login_err = "Oops! Something went wrong. Please try again later.";
         }
         mysqli_stmt_close($stmt);
+    } else {
+        $login_err = "Oops! Something went wrong with the database connection.";
     }
     mysqli_close($dbCon);
 }
