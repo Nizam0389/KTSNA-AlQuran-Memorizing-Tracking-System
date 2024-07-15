@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     }
                 } else {
-                    $login_err = "Invalid username or password.";
+                    $login_err = "Username not existed or password incorrect.";
                 }
             }
             mysqli_stmt_close($stmt);
@@ -91,11 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" maxlength = "20" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" maxlength = "20" required>
             </div>
             <div class="form-group">
                 <button type="submit">Login</button>
