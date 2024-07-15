@@ -8,17 +8,33 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 }
 
 require_once "dbConnect.php";
-require_once "processDetails.php"; // Include the new external PHP file
+require_once "processDetails.php"; // Include the external PHP file
 
-// Fetch memorizing records for the logged-in student
+// Fetch student details
 $student_id = $_SESSION["id"];
-$sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff_id FROM memorizing_record WHERE student_id = ?";
+$student_sql = "SELECT student_name, student.class_id, class.class_name, class.year FROM student 
+                INNER JOIN class ON student.class_id = class.class_id 
+                WHERE student.student_id = ?";
         
-$records = [];
-if ($stmt = mysqli_prepare($dbCon, $sql)) {
+if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_id);
+        mysqli_stmt_bind_result($stmt, $student_name, $class_id, $class_name, $year);
+        mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
+
+// Fetch memorizing records for the logged-in student
+$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff.staff_name FROM memorizing_record 
+                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id 
+                WHERE memorizing_record.student_id = ?";
+        
+$records = [];
+if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
+    mysqli_stmt_bind_param($stmt, "s", $student_id);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_name);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
             $calculated_juzu = calculateJuzu($page);
@@ -33,7 +49,7 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
                 'date' => $date,
                 'session' => $session_desc,
                 'status' => $status_desc,
-                'staff_id' => $staff_id
+                'staff_name' => $staff_name
             ];
         }
         mysqli_stmt_close($stmt);
@@ -106,7 +122,7 @@ if ($stmt = mysqli_prepare($dbCon, $sql)) {
                             <div class="record-item"><strong>Date:</strong> <?php echo htmlspecialchars($record['date']); ?></div>
                             <div class="record-item"><strong>Session:</strong> <?php echo htmlspecialchars($record['session']); ?></div>
                             <div class="record-item"><strong>Status:</strong> <?php echo htmlspecialchars($record['status']); ?></div>
-                            <div class="record-item"><strong>Staff ID:</strong> <?php echo htmlspecialchars($record['staff_id']); ?></div>
+                            <div class="record-item"><strong>Ustaz Name:</strong> <?php echo htmlspecialchars($record['staff_name']); ?></div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
