@@ -20,17 +20,19 @@ $class_id = $_GET['class_id'];
 $class_name_full = urldecode($_GET['class_name_full']);
 
 // Fetch students for the selected class
-$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
+$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, 
+                memorizing_record.page, memorizing_record.juzu, memorizing_record.surah, memorizing_record.status 
                 FROM memorizing_record 
                 INNER JOIN student ON memorizing_record.student_id = student.student_id 
                 INNER JOIN class ON student.class_id = class.class_id 
-                WHERE student.class_id = ?";
+                WHERE student.class_id = ?
+                ORDER BY memorizing_record.page DESC";
 
 $students = [];
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $class_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $status);
+        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $juzu, $surah, $status);
         while (mysqli_stmt_fetch($stmt)) {
             $students[] = [
                 'student_id' => $student_id,
@@ -38,6 +40,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                 'class_name' => $class_name,
                 'year' => $year,
                 'page' => $page,
+                'juzu' => $juzu,
+                'surah' => getSurahName($surah), // Assuming getSurahName function is in processDetails.php
                 'status' => getStatusDescription($status)
             ];
         }
@@ -146,6 +150,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                         <th>Student ID</th>
                         <th>Name</th>
                         <th>Page</th>
+                        <th>Juzu</th>
+                        <th>Surah</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -155,6 +161,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                             <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                             <td><?php echo htmlspecialchars($student['student_name']); ?></td>
                             <td><?php echo htmlspecialchars($student['page']); ?></td>
+                            <td><?php echo htmlspecialchars($student['juzu']); ?></td>
+                            <td><?php echo htmlspecialchars($student['surah']); ?></td>
                             <td><?php echo htmlspecialchars($student['status']); ?></td>
                         </tr>
                     <?php endforeach; ?>
