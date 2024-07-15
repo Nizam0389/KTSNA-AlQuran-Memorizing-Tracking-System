@@ -137,7 +137,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                                     <th>Date</th>
                                     <th>Session</th>
                                     <th>Status</th>
-                                    <th>Staff Name</th>
+                                    <th>Ustaz Name</th>
                                 </tr>
                             </thead>
                             <tbody>
