@@ -1,58 +1,53 @@
 <?php
 session_start();
 
-// Check if the user is logged in, if not then redirect them to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
     header("location: login.php");
     exit;
 }
 
 require_once "dbConnect.php";
+require_once "processDetails.php";
 
-// Fetch staff details from the database
 $staff_id = $_SESSION["id"];
+$staff_name = $staff_username = '';
 $sql = "SELECT staff_name, staff_username FROM staff WHERE staff_id = ?";
-
 if ($stmt = mysqli_prepare($dbCon, $sql)) {
     mysqli_stmt_bind_param($stmt, "s", $staff_id);
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $staff_name, $staff_username);
         mysqli_stmt_fetch($stmt);
-        mysqli_stmt_close($stmt);
     }
+    mysqli_stmt_close($stmt);
 }
 
-// Fetch all classes with combined data
-$class_sql = "SELECT class_id, CONCAT(year, ' ', class_name) AS class_full_name FROM class ORDER BY year, class_name";
 $classes = [];
+$class_sql = "SELECT class_id, CONCAT(year, ' ', class_name) AS class_full_name FROM class ORDER BY year, class_name";
 if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $class_id, $class_full_name);
         while (mysqli_stmt_fetch($stmt)) {
             $classes[] = ['class_id' => $class_id, 'class_full_name' => $class_full_name];
         }
-        mysqli_stmt_close($stmt);
     }
+    mysqli_stmt_close($stmt);
 }
 
-// Process form submission
-$class_id = '';
+$class_id = $class_name_full = '';
 $students = [];
-$class_name_full = '';
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['class'])) {
     $class_id = $_POST['class'];
-
-    // Fetch students for the selected class
-    $student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
-                    FROM memorizing_record 
-                    INNER JOIN student ON memorizing_record.student_id = student.student_id 
-                    INNER JOIN class ON student.class_id = class.class_id 
-                    WHERE student.class_id = ?";
+    $student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mr.page, mr.juzu, mr.surah, mr.status 
+                    FROM memorizing_record mr
+                    INNER JOIN student s ON mr.student_id = s.student_id 
+                    INNER JOIN class c ON s.class_id = c.class_id 
+                    WHERE s.class_id = ?
+                    ORDER BY mr.page DESC";
 
     if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         mysqli_stmt_bind_param($stmt, "s", $class_id);
         if (mysqli_stmt_execute($stmt)) {
-            mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $status);
+            mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $juzu, $surah, $status);
             while (mysqli_stmt_fetch($stmt)) {
                 $students[] = [
                     'student_id' => $student_id,
@@ -60,18 +55,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'class_name' => $class_name,
                     'year' => $year,
                     'page' => $page,
-                    'status' => getStatusDescription($status)
+                    'juzu' => $juzu,
+                    'surah' => getSurahName($surah),
+                    'status' => $status == 'p' ? 'Pass' : 'Not Pass'
                 ];
             }
             $class_name_full = $year . ' ' . $class_name;
-            mysqli_stmt_close($stmt);
         }
+        mysqli_stmt_close($stmt);
     }
 }
 
-function getStatusDescription($status) {
-    return $status == 'p' ? 'Pass' : 'Not Pass';
-}
+mysqli_close($dbCon);
 ?>
 
 <!DOCTYPE html>
@@ -160,6 +155,8 @@ function getStatusDescription($status) {
                                     <th>Student ID</th>
                                     <th>Name</th>
                                     <th>Page</th>
+                                    <th>Juzu</th>
+                                    <th>Surah</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -169,6 +166,8 @@ function getStatusDescription($status) {
                                         <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                                         <td><?php echo htmlspecialchars($student['student_name']); ?></td>
                                         <td><?php echo htmlspecialchars($student['page']); ?></td>
+                                        <td><?php echo htmlspecialchars($student['juzu']); ?></td>
+                                        <td><?php echo htmlspecialchars($student['surah']); ?></td>
                                         <td><?php echo htmlspecialchars($student['status']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
