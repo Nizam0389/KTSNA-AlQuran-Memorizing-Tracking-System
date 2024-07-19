@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
@@ -25,31 +25,69 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     }
 }
 
-// Fetch memorizing records for the logged-in student
-$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff.staff_name FROM memorizing_record 
-                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id 
-                WHERE memorizing_record.student_id = ?";
+// Fetch the latest memorizing records for the logged-in student
+$latest_records_sql = "SELECT mr.memo_id, mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status, s.staff_name 
+                       FROM memorizing_record mr
+                       INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                       INNER JOIN staff s ON mr.staff_id = s.staff_id
+                       WHERE mr.student_id = ? AND (mh.date, mh.time) = (
+                           SELECT MAX(mh2.date), MAX(mh2.time) FROM memorizing_history mh2 WHERE mh2.memo_id = mr.memo_id
+                       )";
         
-$records = [];
-if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
+$latest_records = [];
+if ($stmt = mysqli_prepare($dbCon, $latest_records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_name);
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $time, $session, $status, $staff_name);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
-            $calculated_juzu = calculateJuzu($page);
             $session_desc = getSessionDescription($session);
             $status_desc = getStatusDescription($status);
-            $records[] = [
-                'memo_id' => $memo_id,
-                'page' => $page,
-                'juzu' => $calculated_juzu,
-                'surah' => $surah,
-                'surah_name' => $surah_name,
-                'date' => $date,
-                'session' => $session_desc,
-                'status' => $status_desc,
-                'staff_name' => $staff_name
+            $latest_records[] = [
+                'memo_id' => $memo_id ?? '',
+                'page' => $page ?? '',
+                'juzu' => $juzu ?? '',
+                'surah' => $surah ?? '',
+                'surah_name' => $surah_name ?? '',
+                'date' => $date ?? '',
+                'time' => $time ?? '',
+                'session' => $session_desc ?? '',
+                'status' => $status_desc ?? '',
+                'staff_name' => $staff_name ?? ''
+            ];
+        }
+        mysqli_stmt_close($stmt);
+    }
+}
+
+// Fetch memorizing history for the logged-in student
+$history_sql = "SELECT mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status, mr.memo_id 
+                FROM memorizing_history mh
+                INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
+                WHERE mr.student_id = ?
+                ORDER BY mh.date DESC, mh.time DESC";
+        
+$history_records = [];
+if ($stmt = mysqli_prepare($dbCon, $history_sql)) {
+    mysqli_stmt_bind_param($stmt, "s", $student_id);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $page, $juzu, $surah, $date, $time, $session, $status, $memo_id);
+        $no = 1;
+        while (mysqli_stmt_fetch($stmt)) {
+            $surah_name = getSurahName($surah);
+            $session_desc = getSessionDescription($session);
+            $status_desc = getStatusDescription($status);
+            $history_records[] = [
+                'no' => $no++,
+                'page' => $page ?? '',
+                'juzu' => $juzu ?? '',
+                'surah' => $surah ?? '',
+                'surah_name' => $surah_name ?? '',
+                'date' => $date ?? '',
+                'time' => $time ?? '',
+                'session' => $session_desc ?? '',
+                'status' => $status_desc ?? '',
+                'memo_id' => $memo_id ?? ''
             ];
         }
         mysqli_stmt_close($stmt);
@@ -111,15 +149,16 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
             </header>
             <div class="section">
-                <h2>Your Memorizing Progress</h2>
-                <?php if (!empty($records)): ?>
-                    <?php foreach ($records as $record): ?>
+                <h2>Your Latest Memorizing Progress</h2>
+                <?php if (!empty($latest_records)): ?>
+                    <?php foreach ($latest_records as $record): ?>
                         <div class="record">
                             <div class="record-item"><strong>Memo ID:</strong> <?php echo htmlspecialchars($record['memo_id']); ?></div>
                             <div class="record-item"><strong>Page:</strong> <?php echo htmlspecialchars($record['page']); ?></div>
                             <div class="record-item"><strong>Juzu:</strong> <?php echo htmlspecialchars($record['juzu']); ?></div>
                             <div class="record-item"><strong>Surah:</strong> <?php echo htmlspecialchars($record['surah']); ?> - <?php echo htmlspecialchars($record['surah_name']); ?></div>
                             <div class="record-item"><strong>Date:</strong> <?php echo htmlspecialchars($record['date']); ?></div>
+                            <div class="record-item"><strong>Time:</strong> <?php echo htmlspecialchars($record['time']); ?></div>
                             <div class="record-item"><strong>Session:</strong> <?php echo htmlspecialchars($record['session']); ?></div>
                             <div class="record-item"><strong>Status:</strong> <?php echo htmlspecialchars($record['status']); ?></div>
                             <div class="record-item"><strong>Ustaz Name:</strong> <?php echo htmlspecialchars($record['staff_name']); ?></div>
@@ -127,6 +166,43 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <p>No records found</p>
+                <?php endif; ?>
+            </div>
+            <div class="section">
+                <h2>Your Memorizing History</h2>
+                <?php if (!empty($history_records)): ?>
+                    <div class="history-table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Page</th>
+                                    <th>Juzu</th>
+                                    <th>Surah</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Session</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($history_records as $record): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($record['no']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['page']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['juzu']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['surah']); ?> - <?php echo htmlspecialchars($record['surah_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['date']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['time']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['session']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['status']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <p>No history records found</p>
                 <?php endif; ?>
             </div>
         </div>

@@ -137,6 +137,12 @@ function getSessionDescription($session) {
     return isset($sessions[$session]) ? $sessions[$session] : 'Unknown Session';
 }
 
+
+function getSessionByTime($time) {
+    $hour = (int)date('H', strtotime($time));
+    return ($hour >= 6 && $hour < 18) ? 'd' : 'n';
+}
+
 if (!function_exists('getStatusDescription')) {
     function getStatusDescription($status) {
         return $status == 'p' ? 'Pass' : 'Not Pass';

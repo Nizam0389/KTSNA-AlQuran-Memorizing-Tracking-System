@@ -58,7 +58,7 @@ INSERT INTO student (student_id, student_name, student_username, student_pass, c
 ('ST006', 'Salim Anuar', 'salimanuar', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
 ('ST007', 'Zaid Nordin', 'zaidnordin', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
 ('ST008', 'Farid Rashid', 'faridrashid', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
-('ST009', 'Malik Hassan', 'malikhassan', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
+('ST009', 'Malik Hassan', 'c', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
 ('ST010', 'Rafi Bakar', 'rafibakar', '200820e3227815ed1756a6b531e7e0d2', 'C002'),
 ('ST011', 'Jamal Nasir', 'jamalnasir', '200820e3227815ed1756a6b531e7e0d2', 'C003'),
 ('ST012', 'Nabil Fikri', 'nabilfikri', '200820e3227815ed1756a6b531e7e0d2', 'C003'),

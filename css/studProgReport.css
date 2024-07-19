@@ -72,22 +72,23 @@ body {
 }
 
 header {
-    text-align: center;
-    border-bottom: 2px solid #333;
-    padding-bottom: 10mm;
-    margin-bottom: 10mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #333;
 }
 
 header .header-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-header img {
-    width: 50mm;
-    height: 50mm;
-    margin-bottom: 10mm;
 }
 
 header h1, header h2 {
@@ -119,9 +120,16 @@ header h2 {
     margin: 5mm 0;
 }
 
+.memorizing-records h4 {
+    font-size: 16pt;
+    margin-top: 10mm;
+    margin-bottom: 5mm;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20mm;
 }
 
 table, th, td {

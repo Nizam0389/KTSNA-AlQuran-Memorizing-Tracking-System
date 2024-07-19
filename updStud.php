@@ -18,18 +18,21 @@ if (!isset($_GET['student_id'])) {
 
 $student_id = $_GET['student_id'];
 
-// Fetch student's memorizing record
-$record_sql = "SELECT memorizing_record.memo_id, memorizing_record.page, memorizing_record.status, memorizing_record.juzu, memorizing_record.surah, memorizing_record.date, memorizing_record.session, student.student_name 
-               FROM memorizing_record 
+// Fetch the latest memorizing record and its history
+$record_sql = "SELECT memorizing_record.memo_id, memorizing_history.page, memorizing_history.status, memorizing_history.juzu, memorizing_history.surah, memorizing_history.date, memorizing_history.time, memorizing_history.session, student.student_name 
+               FROM memorizing_history 
+               INNER JOIN memorizing_record ON memorizing_history.memo_id = memorizing_record.memo_id
                INNER JOIN student ON memorizing_record.student_id = student.student_id 
-               WHERE student.student_id = ?";
+               WHERE student.student_id = ?
+               ORDER BY memorizing_history.date DESC, memorizing_history.time DESC
+               LIMIT 1";
 
 $records = [];
 $student_name = "";
 if ($stmt = mysqli_prepare($dbCon, $record_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $status, $juzu, $surah, $date, $session, $student_name);
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $status, $juzu, $surah, $date, $time, $session, $student_name);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
             $session_desc = getSessionDescription($session);
@@ -40,6 +43,7 @@ if ($stmt = mysqli_prepare($dbCon, $record_sql)) {
                 'juzu' => $juzu,
                 'surah' => $surah_name,
                 'date' => $date,
+                'time' => $time,
                 'session' => $session_desc,
                 'student_name' => $student_name
             ];
@@ -52,7 +56,6 @@ if ($stmt = mysqli_prepare($dbCon, $record_sql)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $new_page = $_POST['page'];
     $new_status = $_POST['status'];
-    $new_session = $_POST['session'];
     $memo_id = $_POST['memo_id'];
 
     // Validate page input
@@ -62,10 +65,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $new_juzu = calculateJuzu($new_page);
         $new_surah = calculateSurah($new_page);
         $new_date = date('Y-m-d');
+        $new_time = date('H:i:s');
+        $new_session = getSessionByTime($new_time);
 
-        $update_sql = "UPDATE memorizing_record SET page = ?, juzu = ?, surah = ?, date = ?, status = ?, session = ? WHERE memo_id = ?";
-        if ($stmt = mysqli_prepare($dbCon, $update_sql)) {
-            mysqli_stmt_bind_param($stmt, "iiissss", $new_page, $new_juzu, $new_surah, $new_date, $new_status, $new_session, $memo_id);
+        $insert_sql = "INSERT INTO memorizing_history (memo_id, page, juzu, surah, date, time, status, session) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        if ($stmt = mysqli_prepare($dbCon, $insert_sql)) {
+            mysqli_stmt_bind_param($stmt, "siisssss", $memo_id, $new_page, $new_juzu, $new_surah, $new_date, $new_time, $new_status, $new_session);
             if (mysqli_stmt_execute($stmt)) {
                 header("Location: " . $_SERVER['REQUEST_URI']);
                 exit;
@@ -84,11 +89,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/updStud.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        
-    </script>
     <style>
-        select#status, select#session {
+        select#status {
             width: 100%;
             padding: 10px;
             font-size: 16px;
@@ -122,10 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }, 1000);
                 }
             });
-        }
-
-        function confirmUpdate() {
-            return confirm("Are you sure you want to update this record?");
         }
 
         function confirmUpdate(event) {
@@ -174,14 +172,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
                 <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
                 <li><button class="menu-btn" onclick="location.href='ustazReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
-                <li><button class="menu-btn" onclick="location.href='index.php'"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
+                <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
         <div class="main-content">
             <header>
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <div class="user-info">
-                    <!-- <span><?php echo isset($_SESSION["username"]) ? htmlspecialchars($_SESSION["username"]) : 'Unknown'; ?></span> -->
                     <span><?php echo isset($_SESSION["name"]) ? htmlspecialchars($_SESSION["name"]) : 'Unknown'; ?></span>
                 </div>
             </header>
@@ -204,10 +201,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </select>
 
                                 <label for="session">Session:</label>
-                                <select id="session" name="session">
-                                    <option value="d" <?php if ($record['session'] == 'Day') echo 'selected'; ?>>Day</option>
-                                    <option value="n" <?php if ($record['session'] == 'Night') echo 'selected'; ?>>Night</option>
-                                </select>
+                                <input type="text" id="session" name="session" value="<?php echo htmlspecialchars($record['session']); ?>" readonly>
 
                                 <label for="juzu">Juzu:</label>
                                 <input type="text" id="juzu" name="juzu" value="<?php echo htmlspecialchars($record['juzu']); ?>" readonly>

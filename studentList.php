@@ -30,8 +30,12 @@ $offset = ($page - 1) * $rowsPerPage;
 
 // Fetch students associated with the logged-in staff from memorizing_record table
 $student_sql = "SELECT DISTINCT student.student_id, student.student_name, class.class_name, class.year, 
-                (SELECT page FROM memorizing_record WHERE student_id = student.student_id AND staff_id = ? ORDER BY date DESC LIMIT 1) as latest_page,
-                (SELECT status FROM memorizing_record WHERE student_id = student.student_id AND staff_id = ? ORDER BY date DESC LIMIT 1) as latest_status
+                (SELECT mh.page FROM memorizing_history mh
+                 INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
+                 WHERE mr.student_id = student.student_id AND mr.staff_id = ? ORDER BY mh.date DESC LIMIT 1) as latest_page,
+                (SELECT mh.status FROM memorizing_history mh
+                 INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
+                 WHERE mr.student_id = student.student_id AND mr.staff_id = ? ORDER BY mh.date DESC LIMIT 1) as latest_status
                 FROM memorizing_record 
                 INNER JOIN student ON memorizing_record.student_id = student.student_id 
                 INNER JOIN class ON student.class_id = class.class_id 

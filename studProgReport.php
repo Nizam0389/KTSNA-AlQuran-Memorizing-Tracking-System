@@ -26,30 +26,31 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
 }
 
 // Fetch memorizing records for the logged-in student
-$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff.staff_name FROM memorizing_record 
-                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id 
-                WHERE memorizing_record.student_id = ?";
-        
+$records_sql = "SELECT mr.memo_id, s.staff_name, mh.memoHistory_id, mh.page, mh.juzu, mh.surah, mh.date, mh.session, mh.status
+                FROM memorizing_record mr
+                INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                INNER JOIN staff s ON mr.staff_id = s.staff_id
+                WHERE mr.student_id = ? ORDER BY mh.date DESC";
+
 $records = [];
 if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_name);
+        mysqli_stmt_bind_result($stmt, $memo_id, $staff_name, $memoHistory_id, $page, $juzu, $surah, $date, $session, $status);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
-            $calculated_juzu = calculateJuzu($page);
             $session_desc = getSessionDescription($session);
             $status_desc = getStatusDescription($status);
-            $records[] = [
-                'memo_id' => $memo_id,
+            $records[$memo_id][] = [
+                'staff_name' => $staff_name,
+                'memoHistory_id' => $memoHistory_id,
                 'page' => $page,
-                'juzu' => $calculated_juzu,
+                'juzu' => $juzu,
                 'surah' => $surah,
                 'surah_name' => $surah_name,
                 'date' => $date,
                 'session' => $session_desc,
-                'status' => $status_desc,
-                'staff_name' => $staff_name
+                'status' => $status_desc
             ];
         }
         mysqli_stmt_close($stmt);
@@ -113,8 +114,6 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
             <div class="report-container">
                 <header>
                     <div class="header-content">
-                        <img src="image/ktsna logo.png" alt="KTSNA Logo">
-                        <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                         <h2>Student Progress Report</h2>
                     </div>
                 </header>
@@ -127,34 +126,35 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                 <section class="memorizing-records">
                     <h3>Memorizing Records</h3>
                     <?php if (!empty($records)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Memo ID</th>
-                                    <th>Page</th>
-                                    <th>Juzu</th>
-                                    <th>Surah</th>
-                                    <th>Date</th>
-                                    <th>Session</th>
-                                    <th>Status</th>
-                                    <th>Ustaz Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($records as $record): ?>
+                        <?php foreach ($records as $memo_id => $memo_records): ?>
+                            <h4>Ustaz: <?php echo htmlspecialchars($memo_records[0]['staff_name']); ?></h4>
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($record['memo_id']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['page']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['juzu']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['surah']); ?> - <?php echo htmlspecialchars($record['surah_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['date']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['session']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['status']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['staff_name']); ?></td>
+                                        <th>No</th>
+                                        <th>Page</th>
+                                        <th>Juzu</th>
+                                        <th>Surah</th>
+                                        <th>Date</th>
+                                        <th>Session</th>
+                                        <th>Status</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($memo_records as $index => $record): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($index + 1); ?></td>
+                                            <td><?php echo htmlspecialchars($record['page']); ?></td>
+                                            <td><?php echo htmlspecialchars($record['juzu']); ?></td>
+                                            <td><?php echo htmlspecialchars($record['surah']); ?> - <?php echo htmlspecialchars($record['surah_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($record['date']); ?></td>
+                                            <td><?php echo htmlspecialchars($record['session']); ?></td>
+                                            <td><?php echo htmlspecialchars($record['status']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endforeach; ?>
                     <?php else: ?>
                         <p>No records found</p>
                     <?php endif; ?>

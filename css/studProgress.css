@@ -117,3 +117,53 @@ header h1 {
 .record-item strong {
     color: #333;
 }
+
+/* Styling for the memorizing history table */
+.history-table-container {
+    margin-top: 20px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.history-table th,
+.history-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.history-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.history-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.history-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.history-table th,
+.history-table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.history-table td {
+    color: #333;
+}
+
+.history-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
