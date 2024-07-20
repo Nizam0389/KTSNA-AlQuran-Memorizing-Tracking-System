@@ -42,12 +42,20 @@ $class_name_full = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
 
-    // Fetch students for the selected class
-    $student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
-                    FROM memorizing_record 
-                    INNER JOIN student ON memorizing_record.student_id = student.student_id 
-                    INNER JOIN class ON student.class_id = class.class_id 
-                    WHERE student.class_id = ?";
+    // Fetch the latest memorizing history for students in the selected class
+    $student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mh.page, mh.status 
+                    FROM student s
+                    INNER JOIN class c ON s.class_id = c.class_id
+                    INNER JOIN memorizing_record mr ON s.student_id = mr.student_id
+                    INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                    WHERE s.class_id = ? AND mh.memoHistory_id = (
+                        SELECT mh2.memoHistory_id 
+                        FROM memorizing_history mh2
+                        WHERE mh2.memo_id = mh.memo_id
+                        ORDER BY mh2.date DESC, mh2.time DESC
+                        LIMIT 1
+                    )
+                    ORDER BY s.student_id";
 
     if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         mysqli_stmt_bind_param($stmt, "s", $class_id);

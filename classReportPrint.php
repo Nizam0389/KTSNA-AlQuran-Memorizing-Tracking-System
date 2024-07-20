@@ -1,16 +1,14 @@
 <?php
 session_start();
 
-// Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
 
 require_once "dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "processDetails.php";
 
-// Ensure class ID and class_name_full are provided
 if (!isset($_GET['class_id']) || !isset($_GET['class_name_full'])) {
     header("location: classReport.php");
     exit;
@@ -20,13 +18,19 @@ $class_id = $_GET['class_id'];
 $class_name_full = urldecode($_GET['class_name_full']);
 
 // Fetch students for the selected class
-$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, 
-                memorizing_record.page, memorizing_record.juzu, memorizing_record.surah, memorizing_record.status 
-                FROM memorizing_record 
-                INNER JOIN student ON memorizing_record.student_id = student.student_id 
-                INNER JOIN class ON student.class_id = class.class_id 
-                WHERE student.class_id = ?
-                ORDER BY memorizing_record.page DESC";
+$student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mh.page, mh.juzu, mh.surah, mh.status 
+                FROM student s
+                INNER JOIN class c ON s.class_id = c.class_id
+                INNER JOIN memorizing_record mr ON s.student_id = mr.student_id
+                INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                WHERE s.class_id = ? AND mh.memoHistory_id = (
+                    SELECT mh2.memoHistory_id 
+                    FROM memorizing_history mh2
+                    WHERE mh2.memo_id = mh.memo_id
+                    ORDER BY mh2.date DESC, mh2.time DESC
+                    LIMIT 1
+                )
+                ORDER BY s.student_id";
 
 $students = [];
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
@@ -41,7 +45,7 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                 'year' => $year,
                 'page' => $page,
                 'juzu' => $juzu,
-                'surah' => getSurahName($surah), // Assuming getSurahName function is in processDetails.php
+                'surah' => getSurahName($surah),
                 'status' => getStatusDescription($status)
             ];
         }
@@ -91,9 +95,6 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         .header-content {
             text-align: center;
             margin-bottom: 20px;
-        }
-        .header-content img {
-            width: 100px;
         }
         .header-content h1, .header-content h2 {
             margin: 10px 0;

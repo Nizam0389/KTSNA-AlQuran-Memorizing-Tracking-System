@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Kuala_Lumpur'); // Set the default timezone to Malaysia
+
 function getSurahName($surah_number) {
     $surah_names = [
         1 => "Al-Fatihah", 2 => "Al-Baqarah", 3 => "Al-Imran", 4 => "An-Nisa", 5 => "Al-Ma'idah",

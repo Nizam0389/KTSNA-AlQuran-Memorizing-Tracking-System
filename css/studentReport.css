@@ -8,11 +8,12 @@ body {
 
 .report-container {
     width: 210mm;
-    height: 297mm;
+    height: auto;
     margin: auto;
     background-color: #fff;
     padding: 20mm;
     box-shadow: 0 0 5mm rgba(0, 0, 0, 0.1);
+    page-break-after: always;
 }
 
 header {
@@ -83,4 +84,42 @@ th {
 
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+.print-button-container {
+    text-align: center;
+    margin-top: 20mm;
+}
+
+.print-button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.print-button-container button:hover {
+    background-color: #45a049;
+}
+
+@media print {
+    .report-container {
+        page-break-after: always;
+    }
+    table {
+        page-break-inside: auto;
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
 }

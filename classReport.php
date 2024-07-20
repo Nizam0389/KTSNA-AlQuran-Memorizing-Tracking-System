@@ -37,12 +37,19 @@ $class_id = $class_name_full = '';
 $students = [];
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['class'])) {
     $class_id = $_POST['class'];
-    $student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mr.page, mr.juzu, mr.surah, mr.status 
-                    FROM memorizing_record mr
-                    INNER JOIN student s ON mr.student_id = s.student_id 
-                    INNER JOIN class c ON s.class_id = c.class_id 
-                    WHERE s.class_id = ?
-                    ORDER BY mr.page DESC";
+    $student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mh.page, mh.juzu, mh.surah, mh.status 
+                    FROM student s
+                    INNER JOIN class c ON s.class_id = c.class_id
+                    INNER JOIN memorizing_record mr ON s.student_id = mr.student_id
+                    INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                    WHERE s.class_id = ? AND mh.memoHistory_id = (
+                        SELECT mh2.memoHistory_id 
+                        FROM memorizing_history mh2
+                        WHERE mh2.memo_id = mh.memo_id
+                        ORDER BY mh2.date DESC, mh2.time DESC
+                        LIMIT 1
+                    )
+                    ORDER BY s.student_id";
 
     if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         mysqli_stmt_bind_param($stmt, "s", $class_id);

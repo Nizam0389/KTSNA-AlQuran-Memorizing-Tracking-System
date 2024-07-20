@@ -167,3 +167,22 @@ tbody tr:nth-child(even) {
 .print-button-container button:hover {
     background-color: #45a049;
 }
+
+@media print {
+    .report-container {
+        page-break-after: always;
+    }
+    table {
+        page-break-inside: auto;
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
+}

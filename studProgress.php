@@ -10,6 +10,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 require_once "dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
+// Set the timezone to Malaysia
+date_default_timezone_set('Asia/Kuala_Lumpur');
+
 // Fetch student details
 $student_id = $_SESSION["id"];
 $student_sql = "SELECT student_name, student.class_id, class.class_name, class.year FROM student 
@@ -31,7 +34,8 @@ $latest_records_sql = "SELECT mr.memo_id, mh.page, mh.juzu, mh.surah, mh.date, m
                        INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
                        INNER JOIN staff s ON mr.staff_id = s.staff_id
                        WHERE mr.student_id = ? AND (mh.date, mh.time) = (
-                           SELECT MAX(mh2.date), MAX(mh2.time) FROM memorizing_history mh2 WHERE mh2.memo_id = mr.memo_id
+                           SELECT mh2.date, mh2.time FROM memorizing_history mh2 WHERE mh2.memo_id = mr.memo_id
+                           ORDER BY mh2.date DESC, mh2.time DESC LIMIT 1
                        )";
         
 $latest_records = [];
@@ -60,19 +64,25 @@ if ($stmt = mysqli_prepare($dbCon, $latest_records_sql)) {
     }
 }
 
+// Pagination setup
+$rowsPerPage = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $rowsPerPage;
+
 // Fetch memorizing history for the logged-in student
 $history_sql = "SELECT mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status, mr.memo_id 
                 FROM memorizing_history mh
                 INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
                 WHERE mr.student_id = ?
-                ORDER BY mh.date DESC, mh.time DESC";
+                ORDER BY mh.date DESC, mh.time DESC
+                LIMIT ? OFFSET ?";
         
 $history_records = [];
 if ($stmt = mysqli_prepare($dbCon, $history_sql)) {
-    mysqli_stmt_bind_param($stmt, "s", $student_id);
+    mysqli_stmt_bind_param($stmt, "sii", $student_id, $rowsPerPage, $offset);
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_bind_result($stmt, $page, $juzu, $surah, $date, $time, $session, $status, $memo_id);
-        $no = 1;
+        $no = $offset + 1;
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
             $session_desc = getSessionDescription($session);
@@ -93,6 +103,22 @@ if ($stmt = mysqli_prepare($dbCon, $history_sql)) {
         mysqli_stmt_close($stmt);
     }
 }
+
+// Get total number of records for pagination
+$total_records_sql = "SELECT COUNT(*) FROM memorizing_history mh
+                      INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
+                      WHERE mr.student_id = ?";
+$total_records = 0;
+if ($stmt = mysqli_prepare($dbCon, $total_records_sql)) {
+    mysqli_stmt_bind_param($stmt, "s", $student_id);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $total_records);
+        mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
+
+$totalPages = ceil($total_records / $rowsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -200,6 +226,17 @@ if ($stmt = mysqli_prepare($dbCon, $history_sql)) {
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="pagination">
+                        <!-- <?php if ($page == 1): ?>
+                            <a href="?page=<?php echo $page - 1; ?>">&laquo; Previous</a>
+                        <?php endif; ?> -->
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a href="?page=<?php echo $i; ?>" class="<?php if ($i == $page) echo 'active'; ?>"><?php echo $i; ?></a>
+                        <?php endfor; ?>
+                        <!-- <?php if ($page < $totalPages): ?>
+                            <a href="?page=<?php echo $page + 1; ?>">Next &raquo;</a>
+                        <?php endif; ?> -->
                     </div>
                 <?php else: ?>
                     <p>No history records found</p>
