@@ -17,7 +17,7 @@ CREATE TABLE staff (
     staff_id VARCHAR(5) PRIMARY KEY,
     staff_name VARCHAR(50),
     staff_username VARCHAR(20),
-    staff_pass VARCHAR(255),
+    staff_pass VARCHAR(32),
     staff_type VARCHAR(30)
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE student (
     student_id VARCHAR(5) PRIMARY KEY,
     student_name VARCHAR(50),
     student_username VARCHAR(20),
-    student_pass VARCHAR(255),
+    student_pass VARCHAR(32),
     class_id VARCHAR(5),
     FOREIGN KEY (class_id) REFERENCES class(class_id)
 );
@@ -34,14 +34,22 @@ CREATE TABLE student (
 -- Create the 'memorizing_record' table
 CREATE TABLE memorizing_record (
     memo_id VARCHAR(5) PRIMARY KEY,
-    page INT,
-    juzu INT,
-    surah INT,
-    date DATE,
-    session CHAR(1),
-    status CHAR(1),
     student_id VARCHAR(5),
     staff_id VARCHAR(5),
     FOREIGN KEY (student_id) REFERENCES student(student_id),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
+
+-- Create the 'memorizing_history' table
+CREATE TABLE memorizing_history (
+    memoHistory_id INT AUTO_INCREMENT PRIMARY KEY,
+    memo_id VARCHAR(5),
+    page INT,
+    juzu INT,
+    surah INT,
+    date DATE,
+    time TIME,
+    session CHAR(1),
+    status CHAR(1),
+    FOREIGN KEY (memo_id) REFERENCES memorizing_record(memo_id)
 );
