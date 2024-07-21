@@ -8,7 +8,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once "dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "processDetails.php"; // Ensure this is included
 
 // Ensure class ID and class_name_full are provided
 if (!isset($_GET['class_id']) || !isset($_GET['class_name_full'])) {
@@ -20,17 +20,25 @@ $class_id = $_GET['class_id'];
 $class_name_full = urldecode($_GET['class_name_full']);
 
 // Fetch students for the selected class
-$student_sql = "SELECT student.student_id, student.student_name, class.class_name, class.year, memorizing_record.page, memorizing_record.status 
-                FROM memorizing_record 
-                INNER JOIN student ON memorizing_record.student_id = student.student_id 
-                INNER JOIN class ON student.class_id = class.class_id 
-                WHERE student.class_id = ?";
+$student_sql = "SELECT s.student_id, s.student_name, c.class_name, c.year, mh.page, mh.juzu, mh.surah, mh.status 
+                FROM student s
+                INNER JOIN class c ON s.class_id = c.class_id
+                INNER JOIN memorizing_record mr ON s.student_id = mr.student_id
+                INNER JOIN memorizing_history mh ON mr.memo_id = mh.memo_id
+                WHERE s.class_id = ? AND mh.memoHistory_id = (
+                    SELECT mh2.memoHistory_id 
+                    FROM memorizing_history mh2
+                    WHERE mh2.memo_id = mh.memo_id
+                    ORDER BY mh2.date DESC, mh2.time DESC
+                    LIMIT 1
+                )
+                ORDER BY s.student_id";
 
 $students = [];
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $class_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $status);
+        mysqli_stmt_bind_result($stmt, $student_id, $student_name, $class_name, $year, $page, $juzu, $surah, $status);
         while (mysqli_stmt_fetch($stmt)) {
             $students[] = [
                 'student_id' => $student_id,
@@ -38,6 +46,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                 'class_name' => $class_name,
                 'year' => $year,
                 'page' => $page,
+                'juzu' => $juzu,
+                'surah' => getSurahName($surah),
                 'status' => getStatusDescription($status)
             ];
         }
@@ -75,8 +85,10 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
             border: 1px solid #ddd;
             border-radius: 10px;
             background-color: #fff;
-            width: 21cm;
-            height: 29.7cm;
+            width: 100%;
+            height: 100%;
+            max-width: 21cm;
+            max-height: 29.7cm;
             margin: 0 auto;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
@@ -85,9 +97,6 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
         .header-content {
             text-align: center;
             margin-bottom: 20px;
-        }
-        .header-content img {
-            width: 100px;
         }
         .header-content h1, .header-content h2 {
             margin: 10px 0;
@@ -144,6 +153,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                         <th>Student ID</th>
                         <th>Name</th>
                         <th>Page</th>
+                        <th>Juzu</th>
+                        <th>Surah</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -153,6 +164,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
                             <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                             <td><?php echo htmlspecialchars($student['student_name']); ?></td>
                             <td><?php echo htmlspecialchars($student['page']); ?></td>
+                            <td><?php echo htmlspecialchars($student['juzu']); ?></td>
+                            <td><?php echo htmlspecialchars($student['surah']); ?></td>
                             <td><?php echo htmlspecialchars($student['status']); ?></td>
                         </tr>
                     <?php endforeach; ?>
