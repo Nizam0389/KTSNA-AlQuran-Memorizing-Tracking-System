@@ -120,8 +120,6 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
             <div class="report-container">
                 <header>
                     <div class="header-content">
-                        <img src="image/ktsna logo.png" alt="KTSNA Logo">
-                        <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                         <h2>Student Progress Report</h2>
                     </div>
                 </header>
