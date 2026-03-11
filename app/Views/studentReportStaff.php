@@ -6,7 +6,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-require_once "dbConnect.php";
+require_once "../Models/dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
 if (!isset($_GET['student_id'])) {
@@ -68,7 +68,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/studentReport.css">
+    <link rel="stylesheet" href="../../public/css/studentReport.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         function logout() {
@@ -101,7 +101,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <div class="report-container">
         <header>
             <div class="header-content">
-                <img src="image/ktsna logo.png" alt="KTSNA Logo">
+                <img src="../../public/images/ktsna logo.png" alt="KTSNA Logo">
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <h2>Student Progress Report</h2>
             </div>

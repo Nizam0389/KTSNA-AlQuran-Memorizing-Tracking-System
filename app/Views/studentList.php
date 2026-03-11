@@ -7,7 +7,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-require_once "dbConnect.php";
+require_once "../Models/dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch staff details from the database
@@ -364,7 +364,7 @@ $offset = ($page - 1) * $rowsPerPage;
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="image/ktsna logo.png" alt="Profile Icon">
+                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
                 <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>

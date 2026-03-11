@@ -7,7 +7,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-require_once "dbConnect.php";
+require_once "../Models/dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch student details
@@ -64,7 +64,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/studProgReport.css">
+    <link rel="stylesheet" href="../../public/css/studProgReport.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -98,7 +98,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="image/ktsna logo.png" alt="Profile Icon">
+                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
                 <li><button class="menu-btn" onclick="location.href='studDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>

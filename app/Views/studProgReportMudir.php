@@ -1,16 +1,14 @@
 <?php
 session_start();
 
-// Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
 
-require_once "dbConnect.php";
+require_once "../Models/dbConnect.php";
 require_once "processDetails.php"; // Include the external PHP file
 
-// Ensure a student ID is provided
 if (!isset($_GET['student_id'])) {
     header("location: individualReport.php");
     exit;
@@ -18,46 +16,48 @@ if (!isset($_GET['student_id'])) {
 
 $student_id = $_GET['student_id'];
 
-$student_sql = "SELECT student_name, student.class_id, class.class_name, class.year, staff.staff_name FROM student 
+$student_sql = "SELECT student_name, student.class_id, class.class_name, class.year FROM student 
                 INNER JOIN class ON student.class_id = class.class_id 
-                INNER JOIN memorizing_record ON student.student_id = memorizing_record.student_id
-                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id
-                WHERE student.student_id = ?
-                LIMIT 1"; // Limit to one record to get the Ustaz name
+                WHERE student.student_id = ?";
 
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $student_name, $class_id, $class_name, $year, $ustaz_name);
+        mysqli_stmt_bind_result($stmt, $student_name, $class_id, $class_name, $year);
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
     }
 }
 
 // Fetch memorizing records for the specified student
-$records_sql = "SELECT mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status
+$records_sql = "SELECT mh.memoHistory_id, mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status, s.staff_name 
                 FROM memorizing_history mh
                 INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
-                WHERE mr.student_id = ? ORDER BY mh.date DESC, mh.time DESC";
+                INNER JOIN staff s ON mr.staff_id = s.staff_id
+                WHERE mr.student_id = ?
+                ORDER BY mh.date DESC, mh.time DESC";
 
 $records = [];
 if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $page, $juzu, $surah, $date, $time, $session, $status);
+        mysqli_stmt_bind_result($stmt, $memoHistory_id, $page, $juzu, $surah, $date, $time, $session, $status, $staff_name);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
+            $calculated_juzu = calculateJuzu($page);
             $session_desc = getSessionDescription($session);
             $status_desc = getStatusDescription($status);
             $records[] = [
+                'memoHistory_id' => $memoHistory_id,
                 'page' => $page,
-                'juzu' => $juzu,
+                'juzu' => $calculated_juzu,
                 'surah' => $surah,
                 'surah_name' => $surah_name,
                 'date' => $date,
                 'time' => $time,
                 'session' => $session_desc,
-                'status' => $status_desc
+                'status' => $status_desc,
+                'staff_name' => $staff_name
             ];
         }
         mysqli_stmt_close($stmt);
@@ -71,7 +71,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/studProgReport.css">
+    <link rel="stylesheet" href="../../public/css/studProgReport.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -105,12 +105,11 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="image/ktsna logo.png" alt="Profile Icon">
+                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -129,7 +128,6 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                     <p><strong>Name:</strong> <?php echo htmlspecialchars($student_name ?? ''); ?></p>
                     <p><strong>Class:</strong> <?php echo htmlspecialchars($class_name ?? ''); ?></p>
                     <p><strong>Year:</strong> <?php echo htmlspecialchars($year ?? ''); ?>th Year</p>
-                    <p><strong>Ustaz:</strong> <?php echo htmlspecialchars($ustaz_name ?? ''); ?></p>
                 </section>
                 <section class="memorizing-records">
                     <h3>Memorizing Records</h3>
@@ -145,6 +143,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                                     <th>Time</th>
                                     <th>Session</th>
                                     <th>Status</th>
+                                    <th>Ustaz Name</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,6 +157,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                                         <td><?php echo htmlspecialchars($record['time']); ?></td>
                                         <td><?php echo htmlspecialchars($record['session']); ?></td>
                                         <td><?php echo htmlspecialchars($record['status']); ?></td>
+                                        <td><?php echo htmlspecialchars($record['staff_name']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
