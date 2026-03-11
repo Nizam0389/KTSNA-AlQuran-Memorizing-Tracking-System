@@ -2,56 +2,52 @@
 session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php"; // Include the external PHP file
+require_once "dbConnect.php";
+require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch student details
-$student_id = $_SESSION["id"];
-$student_sql = "SELECT student_name, class.class_name, class.year, staff.staff_name FROM student 
+$student_id = $_GET['student_id'];
+$student_sql = "SELECT student_name, class.class_name, class.year FROM student 
                 INNER JOIN class ON student.class_id = class.class_id 
-                INNER JOIN memorizing_record ON student.student_id = memorizing_record.student_id
-                INNER JOIN staff ON memorizing_record.staff_id = staff.staff_id
-                WHERE student.student_id = ?
-                LIMIT 1"; // Limit to one record to get the Ustaz name
-
+                WHERE student.student_id = ?";
+        
 if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $student_name, $class_name, $year, $ustaz_name);
+        mysqli_stmt_bind_result($stmt, $student_name, $class_name, $year);
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
     }
 }
 
-// Fetch memorizing records for the logged-in student
-$records_sql = "SELECT mh.memo_id, mh.page, mh.juzu, mh.surah, mh.date, mh.session, mh.status
-                FROM memorizing_history mh
-                INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
-                WHERE mr.student_id = ? ORDER BY mh.date DESC, mh.time DESC";
-
+// Fetch memorizing records for the student
+$records_sql = "SELECT memo_id, page, juzu, surah, date, session, status, staff_id FROM memorizing_record WHERE student_id = ?";
+        
 $records = [];
 if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status);
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status, $staff_id);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
+            $calculated_juzu = calculateJuzu($page);
             $session_desc = getSessionDescription($session);
             $status_desc = getStatusDescription($status);
             $records[] = [
                 'memo_id' => $memo_id,
                 'page' => $page,
-                'juzu' => $juzu,
+                'juzu' => $calculated_juzu,
                 'surah' => $surah,
                 'surah_name' => $surah_name,
                 'date' => $date,
                 'session' => $session_desc,
-                'status' => $status_desc
+                'status' => $status_desc,
+                'staff_id' => $staff_id
             ];
         }
         mysqli_stmt_close($stmt);
@@ -65,13 +61,13 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="../../public/css/studentReport.css">
+    <link rel="stylesheet" href="css/studentReport.css">
 </head>
 <body>
     <div class="report-container">
         <header>
             <div class="header-content">
-                <img src="../../public/images/ktsna logo.png" alt="KTSNA Logo">
+                <img src="image/ktsna logo.png" alt="KTSNA Logo">
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <h2>Student Progress Report</h2>
             </div>
@@ -81,7 +77,6 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
             <p><strong>Name:</strong> <?php echo htmlspecialchars($student_name); ?></p>
             <p><strong>Class:</strong> <?php echo htmlspecialchars($class_name); ?></p>
             <p><strong>Year:</strong> <?php echo htmlspecialchars($year); ?>th Year</p>
-            <p><strong>Ustaz:</strong> <?php echo htmlspecialchars($ustaz_name); ?></p>
         </section>
         <section class="memorizing-records">
             <h3>Memorizing Records</h3>
@@ -96,6 +91,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                             <th>Date</th>
                             <th>Session</th>
                             <th>Status</th>
+                            <th>Staff ID</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,6 +104,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                                 <td><?php echo htmlspecialchars($record['date']); ?></td>
                                 <td><?php echo htmlspecialchars($record['session']); ?></td>
                                 <td><?php echo htmlspecialchars($record['status']); ?></td>
+                                <td><?php echo htmlspecialchars($record['staff_id']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

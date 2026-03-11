@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php"; // Include the external PHP file
+require_once "dbConnect.php";
+require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt = mysqli_prepare($dbCon, $insert_sql)) {
             mysqli_stmt_bind_param($stmt, "siiisssss", $new_memo_id, $page, $juzu, $surah, $date, $session, $status, $student_id, $staff_id);
             if (mysqli_stmt_execute($stmt)) {
-                header("location: ../Controllers/studentRecord.php");
+                header("location: uRecord.php");
                 exit;
             }
         }
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KTSNA Al Quran Memorizing Tracking System - Create Record</title>
-    <link rel="stylesheet" href="../../public/css/studDash.css">
+    <link rel="stylesheet" href="css/studDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
@@ -172,7 +172,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
+                        window.location.href = 'logout.php';
                     }, 1000);
                 }
             });
@@ -218,12 +218,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
+                <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -234,13 +234,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <span><?php echo htmlspecialchars($staff_username); ?></span>
                 </div>
             </header>
-            <a href="../Views/newRecord.php" class="back-button">Back to New Record</a>
+            <a href="newRecord.php" class="back-button">Back to New Record</a>
             <div class="form-container">
                 <h2>Create Memorizing Record for <?php echo htmlspecialchars($student_name); ?></h2>
                 <?php if (isset($error_message)): ?>
                     <div class="error-message"><?php echo $error_message; ?></div>
                 <?php endif; ?>
-                <form method="post" action="../Controllers/createRecord.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate(event) && validatePageInput();">
+                <form method="post" action="createRecord.php?student_id=<?php echo $student_id; ?>" onsubmit="return confirmUpdate(event) && validatePageInput();">
                     <div class="form-group">
                         <label for="page">Page:</label>
                         <input type="number" id="page" name="page" min="1" max="604" required>
