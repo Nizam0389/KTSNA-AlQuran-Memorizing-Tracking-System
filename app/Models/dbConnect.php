@@ -1,27 +1,16 @@
 <?php
-/**
- * Database Connection using PDO
- * This centralizes the connection and enables secure SQL handling.
- */
+/* Database credentials. Assuming you are running MySQL
+server with default setting (user 'root' with no password) */
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'ktsna_quran');
 
-// Configuration
-$host     = 'localhost';
-$db_name  = 'ktsna_quran';
-$username = 'root';
-$password = '';
+/* Attempt to connect to MySQL database */
+$dbCon = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-try {
-    // Create connection
-    $dbCon = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $username, $password);
-    
-    // Set error mode to Exceptions (helps you find bugs faster)
-    $dbCon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // Set default fetch mode to Associative Array
-    $dbCon->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-} catch (PDOException $e) {
-    // Hide sensitive info and show a clean error message
-    error_log($e->getMessage()); // Logs the error for the developer
-    die("Database connection failed. Please check your configuration.");
+// Check connection
+if ($dbCon === false) {
+    die("ERROR: Could not connect. " . mysqli_connect_error());
 }
+?>
