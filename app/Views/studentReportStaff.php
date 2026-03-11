@@ -2,15 +2,15 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "../Controllers/processDetails.php"; // Include the external PHP file
 
 if (!isset($_GET['student_id'])) {
-    header("location: individualReport.php");
+    header("location: ../Views/individualReport.php");
     exit;
 }
 
@@ -90,7 +90,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });

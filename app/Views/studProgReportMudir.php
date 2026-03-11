@@ -2,15 +2,15 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "../Controllers/processDetails.php"; // Include the external PHP file
 
 if (!isset($_GET['student_id'])) {
-    header("location: individualReport.php");
+    header("location: ../Views/individualReport.php");
     exit;
 }
 
@@ -94,7 +94,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -108,8 +108,8 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -167,7 +167,7 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                     <?php endif; ?>
                 </section>
                 <div class="print-button-container">
-                    <button onclick="window.open('studentReportStaff.php?student_id=<?php echo $student_id; ?>', '_blank')">Print Report</button>
+                    <button onclick="window.open('../Views/studentReportStaff.php?student_id=<?php echo $student_id; ?>', '_blank')">Print Report</button>
                 </div>
             </div>
         </div>

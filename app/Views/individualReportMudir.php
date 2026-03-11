@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "../Controllers/processDetails.php"; // Include the external PHP file
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
@@ -88,7 +88,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -187,8 +187,8 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -230,7 +230,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                                 <td class="year"><?php echo htmlspecialchars($student['year']); ?></td>
                                 <td class="class"><?php echo htmlspecialchars($student['class_name']); ?></td>
                                 <td class="class-id" style="display:none;"><?php echo htmlspecialchars($student['class_id']); ?></td>
-                                <td><a href="studProgReportMudir.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
+                                <td><a href="../Views/studProgReportMudir.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
                             </tr>
                         <?php endforeach; ?> 
                     </tbody>

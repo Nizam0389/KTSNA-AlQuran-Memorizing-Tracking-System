@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
@@ -70,7 +70,7 @@ if ($result = mysqli_query($dbCon, $sql)) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -122,9 +122,9 @@ if ($result = mysqli_query($dbCon, $sql)) {
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -135,7 +135,7 @@ if ($result = mysqli_query($dbCon, $sql)) {
                     <span><?php echo htmlspecialchars($staff_username); ?></span>
                 </div>
             </header>
-            <a href="uRecord.php" class="back-button">Back to Record</a>
+            <a href="../Controllers/uRecord.php" class="back-button">Back to Record</a>
             <h2>Students Without Memorizing Record</h2>
             <?php if (!empty($students)): ?>
                 <table>
@@ -153,7 +153,7 @@ if ($result = mysqli_query($dbCon, $sql)) {
                                 <td><?php echo htmlspecialchars($student['student_id']); ?></td>
                                 <td><?php echo htmlspecialchars($student['student_name']); ?></td>
                                 <td><?php echo htmlspecialchars($student['class_name']); ?></td>
-                                <td><a href="createRecord.php?student_id=<?php echo $student['student_id']; ?>" class="create-button">Create</a></td>
+                                <td><a href="../Controllers/createRecord.php?student_id=<?php echo $student['student_id']; ?>" class="create-button">Create</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

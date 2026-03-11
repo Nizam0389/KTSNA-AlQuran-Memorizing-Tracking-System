@@ -2,12 +2,12 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php";
+require_once "../Controllers/processDetails.php";
 
 $staff_id = $_SESSION["id"];
 $staff_name = $staff_username = '';
@@ -105,7 +105,7 @@ mysqli_close($dbCon);
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -119,9 +119,9 @@ mysqli_close($dbCon);
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -133,7 +133,7 @@ mysqli_close($dbCon);
                 </div>
             </header>
             <div class="report-form">
-                <form method="post" action="classReport.php">
+                <form method="post" action="../Views/classReport.php">
                     <div class="form-group">
                         <label for="class">Select Class:</label>
                         <select id="class" name="class" required>
@@ -182,7 +182,7 @@ mysqli_close($dbCon);
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('../Views/classReportPrint.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>

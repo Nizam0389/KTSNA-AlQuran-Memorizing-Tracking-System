@@ -2,15 +2,15 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php";
+require_once "../Controllers/processDetails.php";
 
 if (!isset($_GET['class_id']) || !isset($_GET['class_name_full'])) {
-    header("location: classReport.php");
+    header("location: ../Views/classReport.php");
     exit;
 }
 

@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "../Controllers/processDetails.php"; // Include the external PHP file
 
 // Set the timezone to Malaysia
 date_default_timezone_set('Asia/Kuala_Lumpur');
@@ -150,7 +150,7 @@ $totalPages = ceil($total_records / $rowsPerPage);
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -164,9 +164,9 @@ $totalPages = ceil($total_records / $rowsPerPage);
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='studDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='studProgress.php'"><i class="fas fa-chart-line"></i>Progress</button></li>
-                <li><button class="menu-btn" onclick="location.href='studProgReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/studDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/studProgress.php'"><i class="fas fa-chart-line"></i>Progress</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/studProgReport.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>

@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
 require_once "../Models/dbConnect.php";
-require_once "processDetails.php"; // Include the external PHP file
+require_once "../Controllers/processDetails.php"; // Include the external PHP file
 
 // Fetch student details
 $student_id = $_SESSION["id"];

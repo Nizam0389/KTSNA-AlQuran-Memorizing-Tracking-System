@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
+    header("location: ../Views/login.php");
     exit;
 }
 
@@ -111,7 +111,7 @@ function getStatusDescription($status) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = 'logout.php';
+                        window.location.href = '../Controllers/logout.php';
                     }, 1000);
                 }
             });
@@ -125,8 +125,8 @@ function getStatusDescription($status) {
                 <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='../Views/mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -138,7 +138,7 @@ function getStatusDescription($status) {
                 </div>
             </header>
             <div class="report-form">
-                <form method="post" action="classReportMudir.php">
+                <form method="post" action="../Views/classReportMudir.php">
                     <div class="form-group">
                         <label for="class"><h3>Select Class:</h3></label>
                         <select id="class" name="class" required>
@@ -183,7 +183,7 @@ function getStatusDescription($status) {
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('classReportPrintMudir.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('../Views/classReportPrintMudir.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>
