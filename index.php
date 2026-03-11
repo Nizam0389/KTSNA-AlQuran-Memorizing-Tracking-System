@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="../../public/css/index.css">
     <!-- <style>
         .body{
             background-image: url("image/KTSNA BACKGROUND.png");
@@ -16,9 +14,9 @@
 <body>
     <header>
         <div class="header-content">
-            <img src="image/ktsna logo.png" alt="KTSNA Logo" class="logo">
+            <img src="../../public/images/ktsna logo.png" alt="KTSNA Logo" class="logo">
             <h1 style="color: white;">KTSNA Homepage</h1>
-            <button onclick="location.href='login.php'" class="login-btn">Login</button>
+            <button onclick="location.href='../../app/Views/login.php'" class="login-btn">Login</button>
         </div>
     </header>
     <div class="content">

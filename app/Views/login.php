@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "dbConnect.php";
+require_once "../Models/dbConnect.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $_POST['role'];
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["id"] = $id;
                         $_SESSION["name"] = $name;
                         $_SESSION["role"] = $role;  // Add role to session
-                        header("location: studDash.php");
+                        header("location: ../Views/studDash.php");
                     } else {
                         mysqli_stmt_bind_result($stmt, $id, $name, $type);
                         mysqli_stmt_fetch($stmt);
@@ -47,9 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["name"] = $name;
                         $_SESSION["role"] = $type;  // Add role to session
                         if ($type === 'ustaz') {
-                            header("location: ustazDash.php");
+                            header("location: ../Views/ustazDash.php");
                         } else if ($type === 'mudir') {
-                            header("location: mudirDash.php");
+                            header("location: ../Views/mudirDash.php");
                         }
                     }
                 } else {
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Al-Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
     <style>
         .error-message {
             color: red;
@@ -118,5 +118,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </body>
 </html>
-
 
