@@ -3,11 +3,11 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
+require_once "dbConnect.php";
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
@@ -88,7 +88,7 @@ function getStatusDescription($status) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="../../public/css/classReport.css">
+    <link rel="stylesheet" href="css/classReport.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -111,7 +111,7 @@ function getStatusDescription($status) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
+                        window.location.href = 'logout.php';
                     }, 1000);
                 }
             });
@@ -122,11 +122,11 @@ function getStatusDescription($status) {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
+                <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='../Views/mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Views/mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='mudirReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -138,7 +138,7 @@ function getStatusDescription($status) {
                 </div>
             </header>
             <div class="report-form">
-                <form method="post" action="../Views/classReportMudir.php">
+                <form method="post" action="classReportMudir.php">
                     <div class="form-group">
                         <label for="class"><h3>Select Class:</h3></label>
                         <select id="class" name="class" required>
@@ -183,7 +183,7 @@ function getStatusDescription($status) {
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('../Views/classReportPrintMudir.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('classReportPrintMudir.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>

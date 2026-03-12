@@ -2,12 +2,12 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION["role"] !== 'ustaz') {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php";
+require_once "dbConnect.php";
+require_once "processDetails.php";
 
 $staff_id = $_SESSION["id"];
 $staff_name = $staff_username = '';
@@ -82,7 +82,7 @@ mysqli_close($dbCon);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="../../public/css/classReport.css">
+    <link rel="stylesheet" href="css/classReport.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -105,7 +105,7 @@ mysqli_close($dbCon);
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
+                        window.location.href = 'logout.php';
                     }, 1000);
                 }
             });
@@ -116,12 +116,12 @@ mysqli_close($dbCon);
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
+                <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -133,7 +133,7 @@ mysqli_close($dbCon);
                 </div>
             </header>
             <div class="report-form">
-                <form method="post" action="../Views/classReport.php">
+                <form method="post" action="classReport.php">
                     <div class="form-group">
                         <label for="class">Select Class:</label>
                         <select id="class" name="class" required>
@@ -182,7 +182,7 @@ mysqli_close($dbCon);
                         </table>
                     </section>
                     <div class="print-button-container">
-                        <button onclick="window.open('../Views/classReportPrint.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
+                        <button onclick="window.open('classReportPrint.php?class_id=<?php echo $class_id; ?>&class_name_full=<?php echo urlencode($class_name_full); ?>', '_blank')">Generate Report</button>
                     </div>
                 </div>
             <?php endif; ?>

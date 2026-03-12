@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php"; // Include the external PHP file
+require_once "dbConnect.php";
+require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
@@ -65,7 +65,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Individual Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="../../public/css/individual.css">
+    <link rel="stylesheet" href="css/individual.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -88,7 +88,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
+                        window.location.href = 'logout.php';
                     }, 1000);
                 }
             });
@@ -184,12 +184,12 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
+                <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -231,7 +231,7 @@ if ($stmt = mysqli_prepare($dbCon, $class_sql)) {
                                 <td class="year"><?php echo htmlspecialchars($student['year']); ?></td>
                                 <td class="class"><?php echo htmlspecialchars($student['class_name']); ?></td>
                                 <td class="class-id" style="display:none;"><?php echo htmlspecialchars($student['class_id']); ?></td>
-                                <td><a href="../Views/studProgReportStaff.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
+                                <td><a href="studProgReportStaff.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Generate Report</a></td>
                             </tr>
                         <?php endforeach; ?> 
                     </tbody>

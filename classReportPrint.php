@@ -2,15 +2,15 @@
 session_start();
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php";
+require_once "dbConnect.php";
+require_once "processDetails.php";
 
 if (!isset($_GET['class_id']) || !isset($_GET['class_name_full'])) {
-    header("location: ../Views/classReport.php");
+    header("location: classReport.php");
     exit;
 }
 
@@ -138,7 +138,7 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     <div class="report-container">
         <header>
             <div class="header-content">
-                <img src="../../public/images/ktsna logo.png" alt="KTSNA Logo">
+                <img src="image/ktsna logo.png" alt="KTSNA Logo">
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <h2>Class Report for <?php echo htmlspecialchars($class_name_full); ?></h2>
             </div>

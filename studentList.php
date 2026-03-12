@@ -3,12 +3,12 @@ session_start();
 
 // Check if the user is logged in, if not then redirect them to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php"; // Include the external PHP file
+require_once "dbConnect.php";
+require_once "processDetails.php"; // Include the external PHP file
 
 // Fetch staff details from the database
 $staff_id = $_SESSION["id"];
@@ -332,7 +332,7 @@ $offset = ($page - 1) * $rowsPerPage;
                         allowOutsideClick: false
                     });
                     setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
+                        window.location.href = 'logout.php';
                     }, 1000);
                 }
             });
@@ -356,7 +356,7 @@ $offset = ($page - 1) * $rowsPerPage;
         }
 
         function changePage(page) {
-            window.location.href = `../Views/studentList.php?page=${page}`;
+            window.location.href = `studentList.php?page=${page}`;
         }
     </script>
 </head>
@@ -364,12 +364,12 @@ $offset = ($page - 1) * $rowsPerPage;
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="profile">
-                <img src="../../public/images/ktsna logo.png" alt="Profile Icon">
+                <img src="image/ktsna logo.png" alt="Profile Icon">
             </div>
             <ul class="menu">
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Controllers/uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
-                <li><button class="menu-btn" onclick="location.href='../Views/ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazDash.php'"><i class="fas fa-tachometer-alt"></i>Dashboard</button></li>
+                <li><button class="menu-btn" onclick="location.href='uRecord.php'"><i class="fas fa-clipboard-list"></i>Record</button></li>
+                <li><button class="menu-btn" onclick="location.href='ustazReportHome.php'"><i class="fas fa-file-alt"></i>Report</button></li>
                 <li><button class="menu-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button></li>
             </ul>
         </div>
@@ -406,7 +406,7 @@ $offset = ($page - 1) * $rowsPerPage;
                                 <td class="page"><?php echo htmlspecialchars($student['page']); ?></td>
                                 <td class="status"><?php echo htmlspecialchars($student['status']); ?></td>
                                 <td class="action">
-                                    <a href="../Controllers/updStud.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Update</a>
+                                    <a href="updStud.php?student_id=<?php echo $student['student_id']; ?>" class="action-btn">Update</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

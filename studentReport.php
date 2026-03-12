@@ -1,21 +1,17 @@
 <?php
 session_start();
 
+// Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: ../Views/login.php");
+    header("location: login.php");
     exit;
 }
 
-require_once "../Models/dbConnect.php";
-require_once "../Controllers/processDetails.php"; // Include the external PHP file
+require_once "dbConnect.php";
+require_once "processDetails.php"; // Include the external PHP file
 
-if (!isset($_GET['student_id'])) {
-    header("location: ../Views/individualReport.php");
-    exit;
-}
-
-$student_id = $_GET['student_id'];
-
+// Fetch student details
+$student_id = $_SESSION["id"];
 $student_sql = "SELECT student_name, class.class_name, class.year, staff.staff_name FROM student 
                 INNER JOIN class ON student.class_id = class.class_id 
                 INNER JOIN memorizing_record ON student.student_id = memorizing_record.student_id
@@ -32,7 +28,8 @@ if ($stmt = mysqli_prepare($dbCon, $student_sql)) {
     }
 }
 
-$records_sql = "SELECT mh.page, mh.juzu, mh.surah, mh.date, mh.time, mh.session, mh.status
+// Fetch memorizing records for the logged-in student
+$records_sql = "SELECT mh.memo_id, mh.page, mh.juzu, mh.surah, mh.date, mh.session, mh.status
                 FROM memorizing_history mh
                 INNER JOIN memorizing_record mr ON mh.memo_id = mr.memo_id
                 WHERE mr.student_id = ? ORDER BY mh.date DESC, mh.time DESC";
@@ -41,18 +38,18 @@ $records = [];
 if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     mysqli_stmt_bind_param($stmt, "s", $student_id);
     if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $page, $juzu, $surah, $date, $time, $session, $status);
+        mysqli_stmt_bind_result($stmt, $memo_id, $page, $juzu, $surah, $date, $session, $status);
         while (mysqli_stmt_fetch($stmt)) {
             $surah_name = getSurahName($surah);
             $session_desc = getSessionDescription($session);
             $status_desc = getStatusDescription($status);
             $records[] = [
+                'memo_id' => $memo_id,
                 'page' => $page,
                 'juzu' => $juzu,
                 'surah' => $surah,
                 'surah_name' => $surah_name,
                 'date' => $date,
-                'time' => $time,
                 'session' => $session_desc,
                 'status' => $status_desc
             ];
@@ -68,40 +65,13 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Progress Report - KTSNA Al Quran Memorizing Tracking System</title>
-    <link rel="stylesheet" href="../../public/css/studentReport.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        function logout() {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You will be logged out of the system.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, logout"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Logging Out!',
-                        text: 'You are being logged out.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        allowOutsideClick: false
-                    });
-                    setTimeout(() => {
-                        window.location.href = '../Controllers/logout.php';
-                    }, 1000);
-                }
-            });
-        }
-    </script>
+    <link rel="stylesheet" href="css/studentReport.css">
 </head>
 <body>
     <div class="report-container">
         <header>
             <div class="header-content">
-                <img src="../../public/images/ktsna logo.png" alt="KTSNA Logo">
+                <img src="image/ktsna logo.png" alt="KTSNA Logo">
                 <h1>KOLEJ TAHFIZ SAINS NURUL AMAN</h1>
                 <h2>Student Progress Report</h2>
             </div>
@@ -119,25 +89,23 @@ if ($stmt = mysqli_prepare($dbCon, $records_sql)) {
                 <table>
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>Memo ID</th>
                             <th>Page</th>
                             <th>Juzu</th>
                             <th>Surah</th>
                             <th>Date</th>
-                            <th>Time</th>
                             <th>Session</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($records as $index => $record): ?>
+                        <?php foreach ($records as $record): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($index + 1); ?></td>
+                                <td><?php echo htmlspecialchars($record['memo_id']); ?></td>
                                 <td><?php echo htmlspecialchars($record['page']); ?></td>
                                 <td><?php echo htmlspecialchars($record['juzu']); ?></td>
                                 <td><?php echo htmlspecialchars($record['surah']); ?> - <?php echo htmlspecialchars($record['surah_name']); ?></td>
                                 <td><?php echo htmlspecialchars($record['date']); ?></td>
-                                <td><?php echo htmlspecialchars($record['time']); ?></td>
                                 <td><?php echo htmlspecialchars($record['session']); ?></td>
                                 <td><?php echo htmlspecialchars($record['status']); ?></td>
                             </tr>
